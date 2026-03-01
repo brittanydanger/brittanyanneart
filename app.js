@@ -155,6 +155,14 @@ function initNav() {
   document.getElementById('pathCommissionBtn').addEventListener('click', () => {
     openCommissionFlow();
   });
+
+  // Nav scroll behavior — transparent over hero, solid when scrolled
+  const handleNavScroll = () => {
+    const scrolled = window.scrollY > 80;
+    siteNav.classList.toggle('scrolled', scrolled);
+  };
+  window.addEventListener('scroll', handleNavScroll, { passive: true });
+  handleNavScroll(); // set initial state
 }
 
 // ---- SCROLL ANIMATIONS ----
