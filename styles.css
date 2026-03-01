@@ -149,22 +149,18 @@ h1, h2, h3, h4 {
 
 /* ----- Section Base ----- */
 .section {
-  padding: var(--space-xl) 0;
+  padding: var(--space-lg) 0;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
-/* Subtle section separator — thin centered line */
+/* Section separators removed */
 .section + .section::before {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 1px;
-  background: var(--color-border);
-  margin: 0 auto var(--space-xl);
+  content: none !important;
+  display: none !important;
 }
 
 .section-header h2 {
@@ -629,7 +625,7 @@ h1, h2, h3, h4 {
 
 /* Remove excess gap between statement and about */
 .statement + .about {
-  padding-top: 0;
+  padding-top: var(--space-sm);
 }
 
 .statement + .about::before {
@@ -638,11 +634,7 @@ h1, h2, h3, h4 {
 
 /* Tighten gap between about and portfolio */
 .about + .portfolio {
-  padding-top: var(--space-lg);
-}
-
-.about + .portfolio::before {
-  margin-bottom: var(--space-lg);
+  padding-top: var(--space-sm);
 }
 
 .statement-text {
@@ -674,6 +666,14 @@ h1, h2, h3, h4 {
   height: 100%;
   object-fit: cover;
   max-height: 70vh;
+}
+
+.full-bleed-tall {
+  max-height: 90vh;
+}
+
+.full-bleed-tall img {
+  max-height: 90vh;
 }
 
 /* ============================================
@@ -827,6 +827,11 @@ h1, h2, h3, h4 {
 /* ============================================
    SHOP PRINTS PREVIEW
    ============================================ */
+/* Tighten gap between two-paths and shop-preview */
+.two-paths + .shop-preview {
+  padding-top: var(--space-sm);
+}
+
 .shop-preview {
   background: transparent;
   text-align: center;
@@ -834,20 +839,13 @@ h1, h2, h3, h4 {
 
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-sm);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
   margin-bottom: var(--space-md);
 }
 
-@media (min-width: 768px) {
-  .shop-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-md);
-  }
-}
-
 .shop-img-wrap {
-  aspect-ratio: 1;
+  aspect-ratio: 3/4;
   overflow: hidden;
   border-radius: 4px;
   background: var(--warm-cream);
@@ -892,11 +890,7 @@ h1, h2, h3, h4 {
 .testimonial-card {
   background: transparent;
   padding: var(--space-md) 0;
-  border-top: 1px solid var(--color-border);
-}
 
-.testimonial-card:first-child {
-  border-top: none;
 }
 
 .testimonial-card blockquote p {
@@ -990,7 +984,37 @@ h1, h2, h3, h4 {
    CONTACT
    ============================================ */
 .contact {
-  background: transparent;
+  background: #E8EAF2;
+  position: relative;
+}
+
+.contact-swoop {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  line-height: 0;
+  pointer-events: none;
+  transform: translateY(-99%);
+}
+
+.contact-swoop svg {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .contact-swoop svg {
+    height: 100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .contact-swoop svg {
+    height: 130px;
+  }
 }
 
 .contact-grid {
@@ -1102,7 +1126,7 @@ h1, h2, h3, h4 {
   background: var(--dark-blue);
   color: var(--off-white);
   text-align: center;
-  padding: var(--space-xl) var(--space-md);
+  padding: var(--space-lg) var(--space-md);
 }
 
 .footer-brand {

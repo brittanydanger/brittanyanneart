@@ -19,13 +19,13 @@ const SHOP_CONFIG = {
   prints: [
     {
       id: 'print-001',
-      title: 'Surrender',
-      description: 'This piece was channeled during a season of deep transformation. It carries the energy of release and renewal — a reminder that beauty always follows surrender.',
-      image: '',
-      images: [],
-      category: 'healing',
+      title: 'Heaven Sent',
+      description: 'A child wrapped in the warmth of heaven — soft pink clouds parting as she steps forward in white. This piece carries the energy of innocence, divine purpose, and the sacred moment a soul arrives earthside.',
+      image: 'images/art%20images/Britt%20Anne%20Art%2010.jpg',
+      images: ['images/art%20images/Britt%20Anne%20Art%2010.jpg'],
+      category: 'sacred',
       tags: ['new'],
-      placeholderColor: '#CB8A78',
+      placeholderColor: '#F2C4B0',
       sizes: {
         '5x7':   { price: 25,  stripePriceId: '' },
         '8x10':  { price: 40,  stripePriceId: '' },
@@ -35,83 +35,19 @@ const SHOP_CONFIG = {
     },
     {
       id: 'print-002',
-      title: 'Golden Hour',
-      description: 'Painted in the glow of late afternoon light, this piece holds warmth, gratitude, and the quiet magic of golden moments.',
-      image: '',
-      images: [],
-      category: 'nature',
+      title: 'Well Done',
+      description: 'A sacred reunion — the moment of being welcomed home with open arms and radiant joy. This piece channels the energy of divine love, recognition, and the promise that you are known and celebrated beyond the veil.',
+      image: 'images/art%20images/Britt%20Anne%20Art%208.jpg',
+      images: ['images/art%20images/Britt%20Anne%20Art%208.jpg'],
+      category: 'sacred',
       tags: [],
-      placeholderColor: '#AA6D5B',
+      placeholderColor: '#C9B48A',
       sizes: {
         '5x7':   { price: 25,  stripePriceId: '' },
         '8x10':  { price: 40,  stripePriceId: '' },
         '11x14': { price: 65,  stripePriceId: '' }
       },
       sortOrder: 2
-    },
-    {
-      id: 'print-003',
-      title: 'The Becoming',
-      description: 'A portrait of emergence — the moment between who you were and who you are becoming. This piece channels the energy of transformation and self-trust.',
-      image: '',
-      images: [],
-      category: 'empowerment',
-      tags: ['bestseller'],
-      placeholderColor: '#516194',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 3
-    },
-    {
-      id: 'print-004',
-      title: 'Still Waters',
-      description: 'Inspired by the calm after a storm. This piece carries a deep stillness — an invitation to slow down and trust the current of your life.',
-      image: '',
-      images: [],
-      category: 'healing',
-      tags: [],
-      placeholderColor: '#C6C9DC',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 4
-    },
-    {
-      id: 'print-005',
-      title: 'Wildfire',
-      description: 'Fierce and untamed — this piece was born from a season of reclaiming personal power. It carries the energy of courage and unapologetic passion.',
-      image: '',
-      images: [],
-      category: 'empowerment',
-      tags: ['new'],
-      placeholderColor: '#8C4227',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 5
-    },
-    {
-      id: 'print-006',
-      title: 'Homecoming',
-      description: 'A celebration of returning to yourself. This piece holds the warmth of belonging and the sacred comfort of coming home — to your body, your truth, your people.',
-      image: '',
-      images: [],
-      category: 'love',
-      tags: [],
-      placeholderColor: '#F9E9DA',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 6
     }
   ]
 };
