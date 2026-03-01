@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — BrittanyAnne Intuitive Fine Art</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Josefin+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --rose-gold: #AA6D5B;
+      --dark-blue: #262D3C;
+      --warm-rust: #8C4227;
+      --dusty-rose: #CB8A78;
+      --warm-cream: #F9E9DA;
+      --off-white: #FFFAF6;
+      --light-lavender: #C6C9DC;
+      --slate-blue: #516194;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Josefin Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--dark-blue);
+      background: var(--off-white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Login screen */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .login-card {
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-card p {
+      opacity: 0.6;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--light-lavender);
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+
+    .login-card input:focus {
+      border-color: var(--rose-gold);
+    }
+
+    .login-error {
+      color: var(--warm-rust);
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      display: none;
+    }
+
+    /* Shared button */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: var(--rose-gold);
+      color: #fff;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: var(--warm-rust);
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.75rem;
+    }
+
+    /* Admin layout */
+    .admin-wrap {
+      display: none;
+    }
+
+    .admin-nav {
+      background: var(--dark-blue);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-nav h2 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      font-size: 1.25rem;
+    }
+
+    .admin-nav button {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--light-lavender);
+      background: #fff;
+      overflow-x: auto;
+    }
+
+    .admin-tab {
+      padding: 0.875rem 1.5rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--dark-blue);
+      opacity: 0.5;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      font-family: var(--font-body);
+      transition: all 0.2s ease;
+    }
+
+    .admin-tab:hover { opacity: 0.8; }
+    .admin-tab.active {
+      opacity: 1;
+      border-bottom-color: var(--rose-gold);
+      color: var(--rose-gold);
+    }
+
+    .admin-content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .admin-panel {
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+      opacity: 0.7;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--light-lavender);
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--rose-gold);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: var(--light-lavender);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: none;
+    }
+
+    .toggle.on { background: var(--rose-gold); }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle.on::after {
+      transform: translateX(22px);
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+    }
+
+    .lead-times-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .lead-time-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .lead-time-row span {
+      font-size: 0.85rem;
+      font-weight: 400;
+    }
+
+    .lead-time-row input {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--light-lavender);
+    }
+
+    .save-status {
+      font-size: 0.8rem;
+      margin-left: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .save-status.show {
+      opacity: 1;
+      color: #5a7a5a;
+    }
+
+    /* Orders / messages table */
+    .admin-list {
+      list-style: none;
+    }
+
+    .admin-list-item {
+      padding: 1.25rem;
+      border: 1px solid var(--light-lavender);
+      border-radius: 2px;
+      margin-bottom: 0.75rem;
+      background: #fff;
+    }
+
+    .admin-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .admin-list-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+    }
+
+    .admin-list-date {
+      font-size: 0.75rem;
+      opacity: 0.5;
+    }
+
+    .admin-list-detail {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .badge-paid { background: #d4edda; color: #155724; }
+    .badge-pending { background: var(--warm-cream); color: var(--warm-rust); }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .admin-content { padding: 1rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .lead-time-row { grid-template-columns: 60px 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <h1>Admin Panel</h1>
+      <p>BrittanyAnne Intuitive Fine Art</p>
+      <div class="login-error" id="loginError">Incorrect password</div>
+      <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off">
+      <button class="btn btn-primary" id="loginBtn">Sign In</button>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="admin-wrap" id="adminWrap">
+    <nav class="admin-nav">
+      <h2>Admin Panel</h2>
+      <button id="logoutBtn">Sign Out</button>
+    </nav>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-panel="availability">Availability</button>
+      <button class="admin-tab" data-panel="orders">Orders</button>
+      <button class="admin-tab" data-panel="waitlist">Waitlist</button>
+      <button class="admin-tab" data-panel="messages">Messages</button>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- AVAILABILITY -->
+      <div class="admin-panel active" id="panel-availability">
+        <h3 class="section-title">Commission Availability</h3>
+
+        <div class="toggle-wrap">
+          <button class="toggle on" id="toggleAccepting" aria-label="Toggle accepting commissions"></button>
+          <span class="toggle-label">Accepting Commissions</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total Slots</label>
+            <input type="number" id="slotsTotal" min="0" value="5">
+          </div>
+          <div class="form-group">
+            <label>Slots Remaining</label>
+            <input type="number" id="slotsRemaining" min="0" value="3">
+          </div>
+        </div>
+
+        <label style="display:block; font-size:0.8rem; letter-spacing:0.04em; text-transform:uppercase; opacity:0.7; margin-bottom:0.75rem;">Lead Times (weeks)</label>
+        <div class="lead-times-grid" id="leadTimesGrid">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="form-group">
+          <label>Additional Weeks per Extra Subject</label>
+          <input type="number" id="additionalSubjectWeeks" min="0" value="1">
+        </div>
+
+        <div class="toggle-wrap">
+          <button class="toggle" id="toggleWaitlist" aria-label="Toggle waitlist"></button>
+          <span class="toggle-label">Enable Waitlist (when full)</span>
+        </div>
+
+        <div class="form-group">
+          <label>Blackout Message (optional — shown on site when set)</label>
+          <textarea id="blackoutMessage" rows="3" placeholder="e.g., Taking a creative sabbatical in December. Commissions reopen January 2027."></textarea>
+        </div>
+
+        <button class="btn btn-primary btn-sm" id="saveAvailability">
+          Save Changes
+        </button>
+        <span class="save-status" id="saveStatus">Saved!</span>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="admin-panel" id="panel-orders">
+        <h3 class="section-title">Commission Orders</h3>
+        <ul class="admin-list" id="ordersList">
+          <li class="empty-state">Loading...</li>
+        </ul>
+      </div>
+
+      <!-- WAITLIST -->
+      <div class="admin-panel" id="panel-waitlist">
+        <h3 class="section-title">Waitlist</h3>
+        <ul class="admin-list" id="waitlistList">
+          <li class="empty-state">Loading...</li>
+        </ul>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="admin-panel" id="panel-messages">
+        <h3 class="section-title">Contact Messages</h3>
+        <ul class="admin-list" id="messagesList">
+          <li class="empty-state">Loading...</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let adminPassword = '';
+
+    // ---- LOGIN ----
+    const loginScreen = document.getElementById('loginScreen');
+    const adminWrap = document.getElementById('adminWrap');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const passwordInput = document.getElementById('passwordInput');
+
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') attemptLogin();
+    });
+    loginBtn.addEventListener('click', attemptLogin);
+
+    async function attemptLogin() {
+      adminPassword = passwordInput.value;
+      loginError.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { Authorization: adminPassword }
+        });
+        if (res.ok) {
+          loginScreen.style.display = 'none';
+          adminWrap.style.display = 'block';
+          loadAll();
+        } else {
+          loginError.style.display = 'block';
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      } catch (e) {
+        loginError.textContent = 'Connection error';
+        loginError.style.display = 'block';
+      }
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      adminPassword = '';
+      adminWrap.style.display = 'none';
+      loginScreen.style.display = 'flex';
+      passwordInput.value = '';
+    });
+
+    // ---- TABS ----
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+      });
+    });
+
+    // ---- TOGGLES ----
+    document.querySelectorAll('.toggle').forEach(t => {
+      t.addEventListener('click', () => t.classList.toggle('on'));
+    });
+
+    // ---- LOAD ALL DATA ----
+    async function loadAll() {
+      loadAvailability();
+      loadOrders();
+      loadWaitlist();
+      loadMessages();
+    }
+
+    // ---- AVAILABILITY ----
+    async function loadAvailability() {
+      try {
+        const res = await fetch('/api/availability');
+        const data = await res.json();
+
+        document.getElementById('toggleAccepting').classList.toggle('on', data.accepting);
+        document.getElementById('slotsTotal').value = data.slotsTotal || 0;
+        document.getElementById('slotsRemaining').value = data.slotsRemaining || 0;
+        document.getElementById('additionalSubjectWeeks').value = data.additionalSubjectWeeks || 1;
+        document.getElementById('toggleWaitlist').classList.toggle('on', data.waitlistEnabled || false);
+        document.getElementById('blackoutMessage').value = data.blackoutMessage || '';
+
+        // Lead times
+        const grid = document.getElementById('leadTimesGrid');
+        grid.innerHTML = '';
+        const sizes = Object.keys(data.leadTimes || {});
+        sizes.forEach(size => {
+          const lt = data.leadTimes[size];
+          grid.innerHTML += `
+            <div class="lead-time-row">
+              <span>${size}</span>
+              <input type="number" data-size="${size}" data-bound="min" min="0" value="${lt.min}" placeholder="Min">
+              <input type="number" data-size="${size}" data-bound="max" min="0" value="${lt.max}" placeholder="Max">
+            </div>
+          `;
+        });
+      } catch (e) {
+        console.error('Failed to load availability:', e);
+      }
+    }
+
+    document.getElementById('saveAvailability').addEventListener('click', async () => {
+      const leadTimes = {};
+      document.querySelectorAll('.lead-time-row').forEach(row => {
+        const size = row.querySelector('[data-bound="min"]').dataset.size;
+        leadTimes[size] = {
+          min: parseInt(row.querySelector('[data-bound="min"]').value) || 0,
+          max: parseInt(row.querySelector('[data-bound="max"]').value) || 0
+        };
+      });
+
+      const payload = {
+        accepting: document.getElementById('toggleAccepting').classList.contains('on'),
+        slotsTotal: parseInt(document.getElementById('slotsTotal').value) || 0,
+        slotsRemaining: parseInt(document.getElementById('slotsRemaining').value) || 0,
+        leadTimes,
+        additionalSubjectWeeks: parseInt(document.getElementById('additionalSubjectWeeks').value) || 0,
+        waitlistEnabled: document.getElementById('toggleWaitlist').classList.contains('on'),
+        blackoutMessage: document.getElementById('blackoutMessage').value.trim() || null
+      };
+
+      try {
+        const res = await fetch('/api/availability', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: adminPassword
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const status = document.getElementById('saveStatus');
+          status.classList.add('show');
+          setTimeout(() => status.classList.remove('show'), 2000);
+        }
+      } catch (e) {
+        alert('Failed to save');
+      }
+    });
+
+    // ---- ORDERS ----
+    async function loadOrders() {
+      const list = document.getElementById('ordersList');
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { Authorization: adminPassword }
+        });
+        const orders = await res.json();
+
+        if (orders.length === 0) {
+          list.innerHTML = '<li class="empty-state">No orders yet</li>';
+          return;
+        }
+
+        list.innerHTML = orders.map(o => `
+          <li class="admin-list-item">
+            <div class="admin-list-header">
+              <span class="admin-list-title">${o.name || 'Unknown'} — ${formatSize(o.size)}</span>
+              <span>
+                <span class="badge ${o.paid ? 'badge-paid' : 'badge-pending'}">${o.paid ? 'Paid' : 'Pending'}</span>
+                <span class="admin-list-date">${formatDate(o.createdAt)}</span>
+              </span>
+            </div>
+            <div class="admin-list-detail">Email: ${o.email || '—'}</div>
+            <div class="admin-list-detail">Subjects: ${o.subjectCount || '—'} · Approach: ${o.approach || '—'} · For: ${o.subject || '—'}</div>
+            <div class="admin-list-detail">Payment: ${o.paymentType || '—'} · Order ID: ${o.orderId}</div>
+          </li>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<li class="empty-state">Failed to load orders</li>';
+      }
+    }
+
+    // ---- WAITLIST ----
+    async function loadWaitlist() {
+      const list = document.getElementById('waitlistList');
+      try {
+        const res = await fetch('/api/waitlist-entries', {
+          headers: { Authorization: adminPassword }
+        });
+        const entries = await res.json();
+
+        if (entries.length === 0) {
+          list.innerHTML = '<li class="empty-state">No waitlist entries</li>';
+          return;
+        }
+
+        list.innerHTML = entries.map(w => `
+          <li class="admin-list-item">
+            <div class="admin-list-header">
+              <span class="admin-list-title">${w.name}</span>
+              <span class="admin-list-date">${formatDate(w.createdAt)}</span>
+            </div>
+            <div class="admin-list-detail">${w.email}</div>
+            ${w.interest ? `<div class="admin-list-detail">"${w.interest}"</div>` : ''}
+          </li>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<li class="empty-state">Failed to load waitlist</li>';
+      }
+    }
+
+    // ---- MESSAGES ----
+    async function loadMessages() {
+      const list = document.getElementById('messagesList');
+      try {
+        const res = await fetch('/api/contacts', {
+          headers: { Authorization: adminPassword }
+        });
+        const messages = await res.json();
+
+        if (messages.length === 0) {
+          list.innerHTML = '<li class="empty-state">No messages yet</li>';
+          return;
+        }
+
+        list.innerHTML = messages.map(m => `
+          <li class="admin-list-item">
+            <div class="admin-list-header">
+              <span class="admin-list-title">${m.name}</span>
+              <span class="admin-list-date">${formatDate(m.createdAt)}</span>
+            </div>
+            <div class="admin-list-detail">${m.email}</div>
+            <div class="admin-list-detail" style="margin-top:0.5rem; opacity:1;">${m.message}</div>
+          </li>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<li class="empty-state">Failed to load messages</li>';
+      }
+    }
+
+    // ---- HELPERS ----
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatSize(size) {
+      if (!size) return 'Custom';
+      const map = { '8x10':'8x10','11x14':'11x14','16x20':'16x20','18x24':'18x24','24x30':'24x30','24x36':'24x36','36x36':'36x36','48x48':'48x48','custom':'Custom' };
+      return map[size] || size;
+    }
+  </script>
+</body>
+</html>

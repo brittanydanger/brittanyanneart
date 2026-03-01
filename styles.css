@@ -149,6 +149,16 @@ h1, h2, h3, h4 {
   margin-bottom: var(--space-lg);
 }
 
+/* Subtle section separator — thin centered line */
+.section + .section::before {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--color-border);
+  margin: 0 auto var(--space-xl);
+}
+
 .section-header h2 {
   font-size: clamp(2.25rem, 5vw, 3.5rem);
   margin-top: 0.25rem;
@@ -433,6 +443,35 @@ h1, h2, h3, h4 {
   );
 }
 
+/* Swooping curve at bottom of hero */
+.hero-swoop {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.hero-swoop svg {
+  width: 100%;
+  height: 100px;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .hero-swoop svg {
+    height: 120px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-swoop svg {
+    height: 150px;
+  }
+}
+
 .hero-content {
   position: relative;
   z-index: 1;
@@ -567,8 +606,26 @@ h1, h2, h3, h4 {
    STATEMENT
    ============================================ */
 .statement {
-  padding: var(--space-2xl) 0;
+  padding: var(--space-xl) 0 var(--space-lg);
   text-align: center;
+}
+
+/* Remove excess gap between statement and about */
+.statement + .about {
+  padding-top: 0;
+}
+
+.statement + .about::before {
+  display: none;
+}
+
+/* Tighten gap between about and portfolio */
+.about + .portfolio {
+  padding-top: var(--space-lg);
+}
+
+.about + .portfolio::before {
+  margin-bottom: var(--space-lg);
 }
 
 .statement-text {
@@ -587,61 +644,105 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================
-   PORTFOLIO — Asymmetric Gallery Grid
+   FULL-BLEED IMAGE BREAKS
+   ============================================ */
+.full-bleed-image {
+  width: 100%;
+  overflow: hidden;
+  max-height: 70vh;
+}
+
+.full-bleed-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: 70vh;
+}
+
+/* ============================================
+   PORTFOLIO — Edge-to-Edge Gallery
    ============================================ */
 .portfolio {
-  background: var(--color-bg);
+  background: transparent;
+  overflow: hidden;
+}
+
+.portfolio .container {
+  max-width: 100%;
+  padding: 0;
+}
+
+.portfolio .section-header {
+  padding: 0 var(--space-md);
 }
 
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 280px;
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
 }
 
-@media (min-width: 768px) {
+.portfolio-item {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+/* Make a few items span 2 columns for visual variety */
+.portfolio-item:nth-child(1) {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+
+.portfolio-item:nth-child(8) {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+
+@media (max-width: 767px) {
   .portfolio-grid {
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 320px;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
   }
-}
 
-@media (min-width: 1024px) {
-  .portfolio-grid {
-    grid-auto-rows: 380px;
+  .portfolio-item {
+    aspect-ratio: 1;
   }
-}
 
-/* Tall items span 2 rows */
-.portfolio-tall {
-  grid-row: span 2;
+  .portfolio-item:nth-child(1),
+  .portfolio-item:nth-child(8) {
+    grid-column: span 2;
+    aspect-ratio: 2 / 1;
+  }
 }
 
 .portfolio-img-wrap {
   height: 100%;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--warm-cream);
+  box-shadow: 0 4px 24px rgba(38, 45, 60, 0.08);
 }
 
 .portfolio-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s var(--ease);
+  transition: transform 1s var(--ease);
 }
 
 .portfolio-item:hover .portfolio-img-wrap img {
-  transform: scale(1.04);
+  transform: scale(1.03);
+}
+
+.portfolio-item:hover .portfolio-img-wrap {
+  box-shadow: 0 8px 40px rgba(38, 45, 60, 0.14);
 }
 
 /* ============================================
    TWO PATHS
    ============================================ */
 .two-paths {
-  background: var(--color-bg-alt);
+  background: transparent;
 }
 
 .paths-grid {
@@ -659,21 +760,20 @@ h1, h2, h3, h4 {
 }
 
 .path-card {
-  background: var(--color-bg);
-  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
   padding: var(--space-lg) var(--space-md);
   text-align: center;
   cursor: pointer;
-  transition: all var(--duration) var(--ease);
-  box-shadow: var(--shadow-sm);
+  transition: all 0.5s var(--ease);
   display: block;
   color: var(--color-text);
   position: relative;
 }
 
 .path-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
+  border-color: var(--color-accent);
   color: var(--color-text);
 }
 
@@ -709,7 +809,7 @@ h1, h2, h3, h4 {
    SHOP PRINTS PREVIEW
    ============================================ */
 .shop-preview {
-  background: var(--color-bg);
+  background: transparent;
   text-align: center;
 }
 
@@ -759,50 +859,50 @@ h1, h2, h3, h4 {
    TESTIMONIALS
    ============================================ */
 .testimonials {
-  background: var(--color-bg-alt);
+  background: transparent;
 }
 
 .testimonials-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-md);
-  max-width: 1000px;
+  gap: 0;
+  max-width: 680px;
   margin: 0 auto;
 }
 
-@media (min-width: 768px) {
-  .testimonials-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.testimonial-card {
+  background: transparent;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-border);
 }
 
-.testimonial-card {
-  background: var(--color-bg);
-  border-radius: 8px;
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
+.testimonial-card:first-child {
+  border-top: none;
 }
 
 .testimonial-card blockquote p {
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: 1.1rem;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
   line-height: 1.9;
   margin-bottom: var(--space-sm);
 }
 
 .testimonial-card cite {
   font-style: normal;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--color-accent);
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 /* ============================================
    ABOUT
    ============================================ */
 .about {
-  background: var(--color-bg);
+  background: transparent;
+  overflow: hidden;
 }
 
 .about-grid {
@@ -814,16 +914,36 @@ h1, h2, h3, h4 {
 
 @media (min-width: 768px) {
   .about-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 6fr 5fr;
+    gap: var(--space-xl);
+  }
+
+  .about-photo {
+    order: 2;
+  }
+
+  .about-text {
+    order: 1;
+  }
+}
+
+.about-photo {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .about-photo {
+    margin-left: -4vw;
   }
 }
 
 .about-photo img {
   width: 100%;
-  max-width: 480px;
-  border-radius: 8px;
+  max-width: 540px;
+  border-radius: 2px;
   object-fit: cover;
   aspect-ratio: 3 / 4;
+  box-shadow: 0 8px 40px rgba(38, 45, 60, 0.1);
 }
 
 .about-text h2 {
@@ -851,7 +971,7 @@ h1, h2, h3, h4 {
    CONTACT
    ============================================ */
 .contact {
-  background: var(--color-bg-alt);
+  background: transparent;
 }
 
 .contact-grid {
@@ -968,7 +1088,7 @@ h1, h2, h3, h4 {
 
 .footer-brand {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--dusty-rose);
   margin-bottom: 0.25rem;
 }

@@ -94,13 +94,25 @@ const confirmationModal = document.getElementById('confirmationModal');
 const siteNav = document.getElementById('siteNav');
 
 // ---- INITIALIZATION ----
+// Always start at top on page load/refresh
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+if (window.location.hash) window.location.hash = '';
+window.scrollTo(0, 0);
+
 document.addEventListener('DOMContentLoaded', () => {
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => window.scrollTo(0, 0));
   initNav();
   initScrollAnimations();
   initCommissionFlow();
   initContactForm();
   applyConfig();
   updatePriceDisplays();
+});
+
+// Catch the browser's late scroll restoration after all resources load
+window.addEventListener('load', () => {
+  window.scrollTo(0, 0);
 });
 
 // ---- APPLY CONFIG ----
@@ -185,11 +197,37 @@ function initScrollAnimations() {
 // ---- CONTACT FORM ----
 function initContactForm() {
   const form = document.getElementById('contactForm');
-  form.addEventListener('submit', (e) => {
-    // If no Formspree ID is set, prevent default and show a message
-    if (form.action.includes('YOUR_FORM_ID')) {
-      e.preventDefault();
-      alert('Contact form is not yet configured. Please update the Formspree action URL in index.html.');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = form.querySelector('[name="name"]')?.value.trim();
+    const email = form.querySelector('[name="email"]')?.value.trim();
+    const message = form.querySelector('[name="message"]')?.value.trim();
+
+    if (!name || !email || !message) return;
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+
+      if (res.ok) {
+        form.reset();
+        const successMsg = document.createElement('p');
+        successMsg.textContent = 'Thank you! Your message has been sent.';
+        successMsg.style.cssText = 'color: var(--color-accent); margin-top: 1rem; font-style: italic;';
+        form.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 5000);
+      }
+    } catch (err) {
+      // Fallback: try Formspree if server unavailable
+      if (!form.action.includes('YOUR_FORM_ID')) {
+        form.submit();
+      } else {
+        alert('Unable to send message right now. Please try again later.');
+      }
     }
   });
 }
@@ -672,20 +710,92 @@ function populateSummary() {
     bookBtn.addEventListener('click', showConfirmation);
   }
 
-  // Payment card click handlers (show confirmation)
+  // Payment card click handlers — save order then create Stripe checkout
   paymentEl.querySelectorAll('.payment-card').forEach(card => {
-    card.addEventListener('click', (e) => {
-      const stripeHref = card.getAttribute('href');
-      if (!stripeHref || stripeHref === '#' || stripeHref === '') {
-        // No Stripe link configured — prevent navigation, show confirmation
-        e.preventDefault();
-        showConfirmation();
-      } else {
-        // Stripe link exists — opens in new tab; show confirmation after delay
-        setTimeout(showConfirmation, 1000);
-      }
+    card.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const paymentType = card.dataset.payment; // 'full', 'deposit', 'plan'
+      await handleCommissionPayment(paymentType);
     });
   });
+}
+
+async function handleCommissionPayment(paymentType) {
+  const total = calculateTotal();
+
+  // Calculate actual charge amount based on payment type
+  let chargeAmount = total;
+  if (paymentType === 'deposit') {
+    chargeAmount = Math.round(total * (CONFIG.depositPercent / 100));
+  } else if (paymentType === 'plan') {
+    chargeAmount = Math.round(total / CONFIG.paymentPlanInstallments);
+  }
+
+  // Step 1: Save order to server
+  const orderData = {
+    name: state.name,
+    email: state.email,
+    phone: state.phone,
+    subject: state.subject,
+    subjectCount: state.subjectCount,
+    energy: state.energy,
+    energyNote: state.energyNote,
+    approach: state.approach,
+    style: state.style,
+    colorPalette: state.colorPalette,
+    customColors: state.customColors,
+    size: state.size,
+    additionalNotes: state.additionalNotes,
+    photoCount: state.photos.length,
+    total,
+    paymentType
+  };
+
+  let orderId = null;
+  try {
+    const orderRes = await fetch('/api/commission-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    const orderResult = await orderRes.json();
+    orderId = orderResult.orderId;
+  } catch (err) {
+    console.error('Failed to save order:', err);
+  }
+
+  // Step 2: Create Stripe checkout session
+  if (chargeAmount > 0) {
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'commission',
+          amount: chargeAmount,
+          paymentType,
+          orderId,
+          customerEmail: state.email,
+          metadata: {
+            size: state.size,
+            subjects: state.subjectCount,
+            approach: state.approach
+          }
+        })
+      });
+
+      const result = await res.json();
+      if (result.url) {
+        window.location.href = result.url;
+        return;
+      }
+    } catch (err) {
+      console.error('Stripe checkout error:', err);
+    }
+  }
+
+  // Fallback: show confirmation if Stripe isn't set up or amount is 0
+  showConfirmation();
 }
 
 function showConfirmation() {

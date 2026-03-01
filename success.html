@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Booked! — BrittanyAnne Intuitive Fine Art</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'LaLuxes Serif';
+      src: url('Branding/Fonts/LaLuxesSerif.woff2') format('woff2'),
+           url('Branding/Fonts/LaLuxesSerif.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --rose-gold: #AA6D5B;
+      --dark-blue: #262D3C;
+      --warm-rust: #8C4227;
+      --dusty-rose: #CB8A78;
+      --warm-cream: #F9E9DA;
+      --off-white: #FFFAF6;
+      --light-lavender: #C6C9DC;
+      --font-display: 'LaLuxes Serif', 'Cormorant Garamond', serif;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Josefin Sans', sans-serif;
+      --font-script: 'Great Vibes', cursive;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--dark-blue);
+      background: var(--off-white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .success-card {
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--rose-gold);
+    }
+
+    .success-card h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      color: var(--dark-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-subtitle {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--dark-blue);
+      opacity: 0.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .success-steps {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 2.5rem;
+    }
+
+    .success-steps li {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--light-lavender);
+    }
+
+    .success-steps li:last-child {
+      border-bottom: none;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--warm-cream);
+      color: var(--rose-gold);
+      font-weight: 500;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-text strong {
+      display: block;
+      font-weight: 400;
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .step-text span {
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    .success-closing {
+      font-family: var(--font-script);
+      font-size: 1.5rem;
+      color: var(--rose-gold);
+      margin-bottom: 2rem;
+    }
+
+    .success-type-note {
+      font-size: 0.9rem;
+      opacity: 0.6;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.875rem 2.25rem;
+      border-radius: 2px;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      background: var(--rose-gold);
+      color: var(--off-white);
+      border: 2px solid var(--rose-gold);
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: var(--warm-rust);
+      border-color: var(--warm-rust);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-card">
+    <div class="success-icon">&#10022;</div>
+    <h1>You're Booked!</h1>
+    <p class="success-subtitle">Thank you for trusting me with this sacred work.</p>
+
+    <div id="commissionSteps">
+      <p style="margin-bottom: 1.5rem; opacity: 0.8;">Here's what happens next:</p>
+      <ol class="success-steps">
+        <li>
+          <span class="step-num">1</span>
+          <div class="step-text">
+            <strong>Brittany will personally reach out</strong>
+            <span>Within 2-3 business days</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div class="step-text">
+            <strong>Together, you'll refine the details</strong>
+            <span>Reference photos, vision, and any final touches</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div class="step-text">
+            <strong>Brittany begins channeling and creating</strong>
+            <span>Your one-of-a-kind portrait</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <div class="step-text">
+            <strong>Your finished portrait is delivered with love</strong>
+            <span>Carefully packaged and shipped to you</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <div id="printSteps" style="display:none;">
+      <p style="margin-bottom: 1.5rem; opacity: 0.8;">Your order is confirmed! Here's what to expect:</p>
+      <ol class="success-steps">
+        <li>
+          <span class="step-num">1</span>
+          <div class="step-text">
+            <strong>Order received</strong>
+            <span>You'll get a confirmation email from Stripe</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div class="step-text">
+            <strong>Printed with care</strong>
+            <span>Museum-quality print on archival paper</span>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div class="step-text">
+            <strong>Shipped to you</strong>
+            <span>Carefully packaged, typically within 5-7 business days</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <p class="success-closing">This is where the magic begins.</p>
+
+    <a href="index.html" class="btn">Return Home</a>
+  </div>
+
+  <script>
+    // Show appropriate steps based on the type param
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type');
+    if (type === 'print') {
+      document.getElementById('commissionSteps').style.display = 'none';
+      document.getElementById('printSteps').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

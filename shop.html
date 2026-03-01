@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Prints — BrittanyAnne Intuitive Fine Art</title>
+  <meta name="description" content="Shop museum-quality prints of intuitive and channeled artwork by BrittanyAnne. Each piece carries the energy of the original.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="shop.css">
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- NAVIGATION                                    -->
+  <!-- ============================================ -->
+  <nav class="shop-nav" id="shopNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="BrittanyAnne Home">
+        <img src="Branding/Logo%20PNG/Submark-C.png" alt="BA Submark" class="nav-logo-img">
+      </a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html" class="active">Shop</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+
+      <button class="cart-toggle" id="cartToggle" aria-label="Open cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-count" id="cartCount" aria-label="Cart items">0</span>
+      </button>
+    </div>
+  </nav>
+
+
+  <!-- ============================================ -->
+  <!-- SHOP HEADER                                   -->
+  <!-- ============================================ -->
+  <header class="shop-header">
+    <div class="shop-header-inner">
+      <span class="script-label">bring the energy home</span>
+      <h1>The Print Collection</h1>
+      <p class="shop-header-desc">Each piece carries the energy and intention of the original work. Choose the one that speaks to your soul.</p>
+    </div>
+  </header>
+
+
+  <!-- ============================================ -->
+  <!-- FILTER / SORT BAR                             -->
+  <!-- ============================================ -->
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-inner">
+      <div class="filter-categories" id="filterCategories">
+        <button class="filter-pill active" data-category="all">All</button>
+        <button class="filter-pill" data-category="healing">Healing</button>
+        <button class="filter-pill" data-category="empowerment">Empowerment</button>
+        <button class="filter-pill" data-category="nature">Nature</button>
+        <button class="filter-pill" data-category="love">Love</button>
+      </div>
+      <div class="sort-control">
+        <select id="sortSelect" aria-label="Sort prints">
+          <option value="newest">Newest</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- PRINT GALLERY GRID                            -->
+  <!-- ============================================ -->
+  <main class="shop-main">
+    <div class="print-grid" id="printGrid">
+      <!-- Print cards rendered by shop.js -->
+    </div>
+    <p class="coming-soon" id="comingSoon" style="display:none;">More prints coming soon.</p>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <span class="script-label">coming soon</span>
+      <h2>The collection is being curated.</h2>
+      <p>Check back soon or follow along for updates.</p>
+    </div>
+  </main>
+
+
+  <!-- ============================================ -->
+  <!-- PRODUCT DETAIL MODAL                          -->
+  <!-- ============================================ -->
+  <div class="product-overlay" id="productOverlay" aria-hidden="true">
+    <div class="product-modal" role="dialog" aria-labelledby="productTitle">
+      <button class="product-close" id="productClose" aria-label="Close">&times;</button>
+
+      <div class="product-layout">
+        <!-- Left: Images -->
+        <div class="product-images">
+          <div class="product-main-image">
+            <img id="productMainImg" src="" alt="">
+          </div>
+          <div class="product-thumbs" id="productThumbs">
+            <!-- Thumbnail images rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Details -->
+        <div class="product-details">
+          <h2 class="product-title" id="productTitle"></h2>
+          <p class="product-story" id="productStory"></p>
+
+          <div class="product-sizes" id="productSizes">
+            <!-- Size buttons rendered by JS -->
+          </div>
+
+          <div class="product-price" id="productPrice"></div>
+
+          <div class="product-quantity">
+            <button class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">&minus;</button>
+            <span class="qty-value" id="qtyValue">1</span>
+            <button class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary product-add-btn" id="addToCartBtn">Add to Cart</button>
+            <button class="btn btn-secondary product-buy-btn" id="buyNowBtn">Buy Now</button>
+          </div>
+
+          <ul class="product-specs">
+            <li>Museum-quality print on archival paper</li>
+            <li>Printed and shipped by the artist</li>
+            <li id="shippingNote">Ships within 5–7 business days</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- CART DRAWER                                   -->
+  <!-- ============================================ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">&times;</button>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+      <!-- Cart items rendered by JS -->
+    </div>
+
+    <div class="cart-empty" id="cartEmpty">
+      <p>Your cart is empty</p>
+      <button class="btn btn-secondary" id="continueShopping">Continue Shopping</button>
+    </div>
+
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-shipping" id="cartShipping"></div>
+      <div class="cart-subtotal">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">$0</span>
+      </div>
+      <button class="btn btn-primary cart-checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </aside>
+
+
+  <!-- ============================================ -->
+  <!-- MOBILE STICKY CART BAR                        -->
+  <!-- ============================================ -->
+  <div class="mobile-cart-bar" id="mobileCartBar" style="display:none;">
+    <button class="mobile-cart-btn" id="mobileCartBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      View Cart (<span id="mobileCartCount">0</span>)
+    </button>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- TOAST NOTIFICATION                            -->
+  <!-- ============================================ -->
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+
+  <!-- ============================================ -->
+  <!-- FOOTER                                        -->
+  <!-- ============================================ -->
+  <footer class="shop-footer">
+    <div class="footer-inner">
+      <img src="Branding/Logo%20PNG/Logo-Rust.png" alt="BrittanyAnne Intuitive Fine Art" class="footer-logo">
+      <nav class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <p class="footer-copy">&copy; 2025 BrittanyAnne Intuitive Fine Art. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Stripe.js — uncomment when ready -->
+  <!-- <script src="https://js.stripe.com/v3/"></script> -->
+  <script src="shop.js"></script>
+</body>
+</html>
