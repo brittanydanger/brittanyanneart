@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrittanyAnne — Intuitive Fine Art</title>
+  <meta name="description" content="Intuitive and channeled portrait art by BrittanyAnne. Portraits that capture what the eye cannot see.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Josefin+Sans:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- NAVIGATION                                    -->
+  <!-- ============================================ -->
+  <nav class="site-nav" id="siteNav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" aria-label="BrittanyAnne Home">
+        <img src="Branding/Logo%20PNG/Submark-C.png" alt="BA Submark" class="nav-logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#" class="nav-cta" id="navCommissionBtn">Commission a Portrait</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============================================ -->
+  <!-- LANDING PAGE                                  -->
+  <!-- ============================================ -->
+  <main id="landingPage">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <img src="Branding/Logo%20PNG/Logo-Rust.png" alt="BrittanyAnne Intuitive Fine Art" class="hero-logo">
+        <p class="hero-tagline">Portraits that capture what the eye cannot see</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" id="heroCommissionBtn">Commission a Portrait</button>
+          <a href="#shop" class="btn btn-secondary">Shop Prints</a>
+        </div>
+      </div>
+      <div class="scroll-indicator" aria-hidden="true">
+        <span></span>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO PREVIEW -->
+    <section class="section portfolio" id="portfolio">
+      <div class="container">
+        <div class="section-header">
+          <span class="script-label">a glimpse of</span>
+          <h2>The Work</h2>
+        </div>
+        <div class="portfolio-grid">
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art.jpg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art%202.jpg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art%203.jpg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art%204.jpg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art%205.jpeg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+          <div class="portfolio-item fade-in">
+            <div class="portfolio-img-wrap">
+              <img src="images/art%20images/Britt%20Anne%20Art%206.jpg" alt="Portrait artwork" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TWO PATHS -->
+    <section class="section two-paths" id="paths">
+      <div class="container">
+        <div class="section-header">
+          <span class="script-label">how can I</span>
+          <h2>Serve You?</h2>
+        </div>
+        <div class="paths-grid">
+          <div class="path-card fade-in" id="pathCommissionBtn">
+            <div class="path-icon">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4z"/>
+                <path d="M18 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+                <path d="M14 34c0-5.5 4.5-10 10-10s10 4.5 10 10"/>
+              </svg>
+            </div>
+            <h3>Commission a Portrait</h3>
+            <p>A one-of-a-kind, intuitive portrait created just for you — guided by intention, spirit, and love.</p>
+            <span class="path-arrow" aria-hidden="true">&rarr;</span>
+          </div>
+          <a href="#shop" class="path-card fade-in">
+            <div class="path-icon">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <rect x="6" y="14" width="36" height="28" rx="2"/>
+                <path d="M16 14V10a8 8 0 0116 0v4"/>
+                <circle cx="18" cy="26" r="2"/><circle cx="30" cy="26" r="2"/>
+              </svg>
+            </div>
+            <h3>Shop Prints</h3>
+            <p>Beautiful reproductions of Brittany's original works — perfect for bringing sacred art into your space.</p>
+            <span class="path-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOP PRINTS PREVIEW -->
+    <section class="section shop-preview" id="shop">
+      <div class="container">
+        <div class="section-header">
+          <span class="script-label">sacred art for</span>
+          <h2>Your Space</h2>
+        </div>
+        <div class="shop-grid">
+          <div class="shop-item fade-in">
+            <div class="shop-img-wrap">
+              <img src="images/Prints/Christ%20coming%20for%20Claire%20II.jpg" alt="Art print" loading="lazy">
+            </div>
+          </div>
+          <div class="shop-item fade-in">
+            <div class="shop-img-wrap">
+              <img src="images/Prints/Come%20Unto%20Me%20-%20Oct%202016.jpg" alt="Art print" loading="lazy">
+            </div>
+          </div>
+          <div class="shop-item fade-in">
+            <div class="shop-img-wrap">
+              <img src="images/Prints/IMG_9723.jpg" alt="Art print" loading="lazy">
+            </div>
+          </div>
+          <div class="shop-item fade-in">
+            <div class="shop-img-wrap">
+              <img src="images/Prints/IMG_9738.jpg" alt="Art print" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <p class="shop-description">Beautiful reproductions of Brittany's original works. Available in 5&times;7, 8&times;10, and 11&times;14.</p>
+        <a href="#" class="btn btn-primary shop-btn" id="shopLink" target="_blank" rel="noopener">Browse the Full Collection &rarr;</a>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="script-label">kind words from</span>
+          <h2>Clients</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card fade-in">
+            <blockquote>
+              <p>&ldquo;Brittany captured something in my daughter's portrait that I didn't even know how to put into words. It's like she saw straight into her soul. We cried when we saw it.&rdquo;</p>
+            </blockquote>
+            <cite>&mdash; Sarah M.</cite>
+          </div>
+          <div class="testimonial-card fade-in">
+            <blockquote>
+              <p>&ldquo;I chose the fully channeled experience and was blown away. The colors, the energy, everything was exactly what I needed but didn't know how to ask for. This is sacred art.&rdquo;</p>
+            </blockquote>
+            <cite>&mdash; Rachel T.</cite>
+          </div>
+          <div class="testimonial-card fade-in">
+            <blockquote>
+              <p>&ldquo;The portrait of my late mother brought me more healing than I can express. Brittany has a true gift — she channels with such love and intention. I'll treasure this forever.&rdquo;</p>
+            </blockquote>
+            <cite>&mdash; Jennifer L.</cite>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section about" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-photo fade-in">
+            <img src="images/Images%20of%20Me/IMG_3065-3.jpg" alt="Brittany Anne, intuitive portrait artist" loading="lazy">
+          </div>
+          <div class="about-text fade-in">
+            <span class="script-label">the artist</span>
+            <h2>Meet Brittany</h2>
+            <p>From the time I could hold a pencil, I knew art was my language. But it wasn't until I began listening — really listening — to the quiet voice within that my work became something more than technique. It became a channel.</p>
+            <p>Every portrait I create begins with intention and prayer. Whether I'm working from your vision or channeling one from spirit, my process is the same: I open my heart, connect with the energy of the subject, and let my hands follow. The result is a portrait that captures not just a likeness, but an essence — the part of you that the eye cannot see.</p>
+            <p>I believe art has the power to heal, to honor, and to make the invisible visible. It's my life's purpose to create that for you.</p>
+            <p class="about-signature">With love,<br><span class="script-text">Brittany</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <div class="section-header">
+          <span class="script-label">let's connect</span>
+          <h2>Get in Touch</h2>
+        </div>
+        <div class="contact-grid">
+          <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+            <div class="form-group">
+              <label for="contactName">Name</label>
+              <input type="text" id="contactName" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Email</label>
+              <input type="email" id="contactEmail" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+          <div class="contact-info">
+            <p class="contact-email">
+              <a href="mailto:hello@brittanyanneart.com" id="contactEmailLink">hello@brittanyanneart.com</a>
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Instagram" class="social-link" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </a>
+              <a href="#" aria-label="Facebook" class="social-link" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+              </a>
+              <a href="#" aria-label="TikTok" class="social-link" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container">
+        <p class="footer-brand script-text">BrittanyAnne</p>
+        <p class="footer-subtitle">Intuitive Fine Art</p>
+        <p class="footer-copy">&copy; <span id="footerYear">2026</span> BrittanyAnne Intuitive Fine Art. All rights reserved.</p>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ============================================ -->
+  <!-- COMMISSION FLOW (fullscreen overlay)          -->
+  <!-- ============================================ -->
+  <div class="commission-flow" id="commissionFlow" aria-hidden="true">
+
+    <!-- Progress Bar -->
+    <div class="flow-progress">
+      <div class="flow-progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Close / Back to Home -->
+    <button class="flow-close" id="flowClose" aria-label="Close and return home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- Steps Container -->
+    <div class="flow-steps" id="flowSteps">
+
+      <!-- STEP 0: Welcome -->
+      <div class="flow-step" data-step="0">
+        <div class="step-content step-centered">
+          <span class="script-label">let's create something sacred</span>
+          <h2>Commission a Portrait</h2>
+          <p>Every portrait begins with intention. Over the next few moments, I'll guide you through a series of questions to understand your vision — or to open the space for me to channel one for you.</p>
+          <p class="step-note">This isn't a form. It's the beginning of your portrait journey.</p>
+          <button class="btn btn-primary flow-next" data-next="1">Begin &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 1: Who is this for? -->
+      <div class="flow-step" data-step="1">
+        <div class="step-content">
+          <span class="step-number">01</span>
+          <h2>Who is this portrait for?</h2>
+          <div class="option-grid option-grid-3" data-field="subject">
+            <button class="option-card" data-value="myself">
+              <span class="option-icon" aria-hidden="true">&#128100;</span>
+              <span class="option-label">Myself</span>
+            </button>
+            <button class="option-card" data-value="loved-one">
+              <span class="option-icon" aria-hidden="true">&#127873;</span>
+              <span class="option-label">A Loved One</span>
+              <span class="option-sub">A portrait as a gift</span>
+            </button>
+            <button class="option-card" data-value="family">
+              <span class="option-icon" aria-hidden="true">&#128106;</span>
+              <span class="option-label">A Family / Group</span>
+            </button>
+            <button class="option-card" data-value="pet">
+              <span class="option-icon" aria-hidden="true">&#128054;</span>
+              <span class="option-label">A Pet</span>
+            </button>
+            <button class="option-card" data-value="passed">
+              <span class="option-icon" aria-hidden="true">&#128330;</span>
+              <span class="option-label">Someone Who Has Passed</span>
+              <span class="option-sub">A portrait of remembrance</span>
+            </button>
+            <button class="option-card" data-value="other">
+              <span class="option-icon" aria-hidden="true">&#10024;</span>
+              <span class="option-label">Other</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: How many subjects? -->
+      <div class="flow-step" data-step="2">
+        <div class="step-content">
+          <span class="step-number">02</span>
+          <h2>How many subjects?</h2>
+          <div class="option-grid option-grid-6" data-field="subjectCount">
+            <button class="option-card option-compact" data-value="1">
+              <span class="option-label">1</span>
+            </button>
+            <button class="option-card option-compact" data-value="2">
+              <span class="option-label">2</span>
+            </button>
+            <button class="option-card option-compact" data-value="3">
+              <span class="option-label">3</span>
+            </button>
+            <button class="option-card option-compact" data-value="4">
+              <span class="option-label">4</span>
+            </button>
+            <button class="option-card option-compact" data-value="5">
+              <span class="option-label">5</span>
+            </button>
+            <button class="option-card option-compact" data-value="6+">
+              <span class="option-label">6+</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Intention / Energy -->
+      <div class="flow-step" data-step="3">
+        <div class="step-content">
+          <span class="step-number">03</span>
+          <h2>What energy do you want this portrait to carry?</h2>
+          <div class="option-grid option-grid-3" data-field="energy">
+            <button class="option-card" data-value="healing">
+              <span class="option-icon" aria-hidden="true">&#128156;</span>
+              <span class="option-label">Healing</span>
+            </button>
+            <button class="option-card" data-value="celebration">
+              <span class="option-icon" aria-hidden="true">&#127881;</span>
+              <span class="option-label">Celebration</span>
+            </button>
+            <button class="option-card" data-value="remembrance">
+              <span class="option-icon" aria-hidden="true">&#128367;</span>
+              <span class="option-label">Remembrance</span>
+            </button>
+            <button class="option-card" data-value="love">
+              <span class="option-icon" aria-hidden="true">&#128151;</span>
+              <span class="option-label">Love</span>
+            </button>
+            <button class="option-card" data-value="empowerment">
+              <span class="option-icon" aria-hidden="true">&#9889;</span>
+              <span class="option-label">Empowerment</span>
+            </button>
+            <button class="option-card" data-value="transformation">
+              <span class="option-icon" aria-hidden="true">&#127808;</span>
+              <span class="option-label">Transformation</span>
+            </button>
+            <button class="option-card" data-value="channel">
+              <span class="option-icon" aria-hidden="true">&#10024;</span>
+              <span class="option-label">Let Brittany Channel</span>
+              <span class="option-sub">Trust the process</span>
+            </button>
+          </div>
+          <div class="step-textarea-group">
+            <label for="energyNote">Anything you'd like Brittany to know?</label>
+            <textarea id="energyNote" rows="3" placeholder="Optional — share any feelings, memories, or intentions..."></textarea>
+          </div>
+          <button class="btn btn-primary flow-next" data-next="4">Continue &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: The Fork -->
+      <div class="flow-step" data-step="4">
+        <div class="step-content">
+          <span class="step-number">04</span>
+          <h2>How would you like to approach this?</h2>
+          <div class="option-grid option-grid-2" data-field="approach">
+            <button class="option-card option-tall" data-value="vision">
+              <span class="option-icon" aria-hidden="true">&#128065;</span>
+              <span class="option-label">I Have a Vision</span>
+              <span class="option-sub">I'd like to share my preferences for style, colors, and details</span>
+            </button>
+            <button class="option-card option-tall option-featured" data-value="channeled">
+              <span class="option-badge">&#10022; Signature Experience</span>
+              <span class="option-icon" aria-hidden="true">&#10024;</span>
+              <span class="option-label">Fully Channeled</span>
+              <span class="option-sub">I trust Brittany's gift completely. Let spirit guide the creation.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Style (Vision path only) -->
+      <div class="flow-step" data-step="5">
+        <div class="step-content">
+          <span class="step-number">05</span>
+          <h2>What style speaks to you?</h2>
+          <div class="option-grid option-grid-2" data-field="style">
+            <button class="option-card" data-value="colored-pencil">
+              <span class="option-label">Colored Pencil</span>
+              <span class="option-sub">Delicate, detailed, luminous</span>
+            </button>
+            <button class="option-card" data-value="painted">
+              <span class="option-label">Painted</span>
+              <span class="option-sub">Expressive, rich, textured</span>
+            </button>
+            <button class="option-card" data-value="mixed-media">
+              <span class="option-label">Mixed Media</span>
+              <span class="option-sub">Layered, dimensional, unique</span>
+            </button>
+            <button class="option-card" data-value="brittanys-choice">
+              <span class="option-label">Brittany's Choice</span>
+              <span class="option-sub">Let the medium find you</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: Color Palette (Vision path only) -->
+      <div class="flow-step" data-step="6">
+        <div class="step-content">
+          <span class="step-number">06</span>
+          <h2>What color palette feels right?</h2>
+          <div class="option-grid option-grid-3" data-field="colorPalette">
+            <button class="option-card" data-value="warm">
+              <span class="color-swatch swatch-warm" aria-hidden="true"></span>
+              <span class="option-label">Warm Tones</span>
+              <span class="option-sub">Golds, ambers, earth</span>
+            </button>
+            <button class="option-card" data-value="cool">
+              <span class="color-swatch swatch-cool" aria-hidden="true"></span>
+              <span class="option-label">Cool Tones</span>
+              <span class="option-sub">Blues, purples, silver</span>
+            </button>
+            <button class="option-card" data-value="neutral">
+              <span class="color-swatch swatch-neutral" aria-hidden="true"></span>
+              <span class="option-label">Neutral &amp; Soft</span>
+              <span class="option-sub">Creams, taupes, blush</span>
+            </button>
+            <button class="option-card" data-value="bold">
+              <span class="color-swatch swatch-bold" aria-hidden="true"></span>
+              <span class="option-label">Bold &amp; Vibrant</span>
+              <span class="option-sub">Rich, saturated, alive</span>
+            </button>
+            <button class="option-card" data-value="channel">
+              <span class="color-swatch swatch-channel" aria-hidden="true"></span>
+              <span class="option-label">Let Brittany Channel</span>
+              <span class="option-sub">Trust the colors that come through</span>
+            </button>
+            <button class="option-card" data-value="custom">
+              <span class="color-swatch swatch-custom" aria-hidden="true"></span>
+              <span class="option-label">Custom</span>
+              <span class="option-sub">Describe your vision below</span>
+            </button>
+          </div>
+          <div class="step-textarea-group" id="customColorGroup" style="display:none;">
+            <label for="customColors">Describe your color vision</label>
+            <textarea id="customColors" rows="3" placeholder="Tell me about the colors you're dreaming of..."></textarea>
+          </div>
+          <button class="btn btn-primary flow-next" data-next="7">Continue &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 7: Size -->
+      <div class="flow-step" data-step="7">
+        <div class="step-content">
+          <span class="step-number dynamic-step-num">07</span>
+          <h2>Choose your size</h2>
+          <p class="step-hint">Pricing is based on your selected number of subjects. Some sizes may not be available for larger groups.</p>
+          <div class="option-grid option-grid-3" data-field="size">
+            <button class="option-card option-size" data-value="8x10">
+              <div class="size-frame size-8x10" aria-hidden="true"></div>
+              <span class="option-label">8 &times; 10</span>
+              <span class="option-sub">Intimate &amp; personal</span>
+              <span class="option-price" data-size="8x10"></span>
+            </button>
+            <button class="option-card option-size" data-value="11x14">
+              <div class="size-frame size-11x14" aria-hidden="true"></div>
+              <span class="option-label">11 &times; 14</span>
+              <span class="option-sub">Classic &amp; versatile</span>
+              <span class="option-price" data-size="11x14"></span>
+            </button>
+            <button class="option-card option-size" data-value="16x20">
+              <div class="size-frame size-16x20" aria-hidden="true"></div>
+              <span class="option-label">16 &times; 20</span>
+              <span class="option-sub">Statement piece</span>
+              <span class="option-price" data-size="16x20"></span>
+            </button>
+            <button class="option-card option-size" data-value="18x24">
+              <div class="size-frame size-18x24" aria-hidden="true"></div>
+              <span class="option-label">18 &times; 24</span>
+              <span class="option-sub">Gallery ready</span>
+              <span class="option-price" data-size="18x24"></span>
+            </button>
+            <button class="option-card option-size" data-value="24x30">
+              <div class="size-frame size-24x30" aria-hidden="true"></div>
+              <span class="option-label">24 &times; 30</span>
+              <span class="option-sub">Grand &amp; striking</span>
+              <span class="option-price" data-size="24x30"></span>
+            </button>
+            <button class="option-card option-size" data-value="24x36">
+              <div class="size-frame size-24x36" aria-hidden="true"></div>
+              <span class="option-label">24 &times; 36</span>
+              <span class="option-sub">Commanding presence</span>
+              <span class="option-price" data-size="24x36"></span>
+            </button>
+            <button class="option-card option-size" data-value="36x36">
+              <div class="size-frame size-36x36" aria-hidden="true"></div>
+              <span class="option-label">36 &times; 36</span>
+              <span class="option-sub">Showstopper</span>
+              <span class="option-price" data-size="36x36"></span>
+            </button>
+            <button class="option-card option-size" data-value="48x48">
+              <div class="size-frame size-48x48" aria-hidden="true"></div>
+              <span class="option-label">48 &times; 48</span>
+              <span class="option-sub">Monumental</span>
+              <span class="option-price" data-size="48x48"></span>
+            </button>
+            <button class="option-card option-size" data-value="custom">
+              <div class="size-frame size-custom" aria-hidden="true">?</div>
+              <span class="option-label">Custom Size</span>
+              <span class="option-sub">Something unique</span>
+              <span class="option-price">Contact for quote</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 8: Reference Photos -->
+      <div class="flow-step" data-step="8">
+        <div class="step-content">
+          <span class="step-number dynamic-step-num">08</span>
+          <h2>Reference photos</h2>
+          <p>Share any images that might help guide the portrait. These don't need to be perfect — we'll refine together after booking.</p>
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-prompt">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M24 32V16m0 0l-6 6m6-6l6 6"/>
+                <rect x="6" y="6" width="36" height="36" rx="4"/>
+              </svg>
+              <p>Drag &amp; drop images here</p>
+              <span>or</span>
+              <label class="upload-btn btn btn-secondary" for="fileInput">Choose Files</label>
+              <input type="file" id="fileInput" multiple accept="image/*" class="sr-only">
+            </div>
+            <div class="upload-previews" id="uploadPreviews"></div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-ghost flow-next" data-next="9">Skip for Now</button>
+            <button class="btn btn-primary flow-next" data-next="9" id="continueWithPhotos" style="display:none;">Continue with Photos &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9: Contact Info -->
+      <div class="flow-step" data-step="9">
+        <div class="step-content">
+          <span class="step-number dynamic-step-num">09</span>
+          <h2>Final details</h2>
+          <div class="flow-form">
+            <div class="form-group">
+              <label for="clientName">Name <span class="required">*</span></label>
+              <input type="text" id="clientName" required>
+            </div>
+            <div class="form-group">
+              <label for="clientEmail">Email <span class="required">*</span></label>
+              <input type="email" id="clientEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="clientPhone">Phone <span class="optional">(optional)</span></label>
+              <input type="tel" id="clientPhone">
+            </div>
+            <div class="form-group">
+              <label for="additionalNotes">Anything else you'd like to share?</label>
+              <textarea id="additionalNotes" rows="3" placeholder="Any final thoughts, hopes, or details..."></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="reviewBtn">Review Your Portrait &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 10: Summary + Payment -->
+      <div class="flow-step" data-step="10">
+        <div class="step-content step-centered">
+          <span class="script-label">your portrait journey</span>
+          <h2>Here's What We've Created Together</h2>
+          <div class="summary-card" id="summaryCard">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="summary-total" id="summaryTotal">
+            <!-- Dynamically populated -->
+          </div>
+          <h3 class="payment-heading">Choose a Payment Option</h3>
+          <div class="payment-options" id="paymentOptions">
+            <!-- Dynamically populated -->
+          </div>
+          <button class="btn btn-ghost" id="editSelectionsBtn">&larr; Edit Selections</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Back button -->
+    <button class="flow-back" id="flowBack" aria-label="Go back" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>Back</span>
+    </button>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CONFIRMATION MODAL                            -->
+  <!-- ============================================ -->
+  <div class="modal-overlay" id="confirmationModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <h2 id="modalTitle">You're Booked!</h2>
+      <p class="modal-subtitle">Here's what happens next:</p>
+      <ol class="modal-steps">
+        <li><strong>Brittany will personally reach out</strong> within 2&ndash;3 business days</li>
+        <li><strong>Together, you'll refine the details</strong> — reference photos, vision, final touches</li>
+        <li><strong>Brittany begins channeling and creating</strong> your portrait</li>
+        <li><strong>Your finished portrait is delivered</strong> with love</li>
+      </ol>
+      <p class="modal-closing script-text">This is where the magic begins.</p>
+      <button class="btn btn-primary" id="modalCloseBtn">Return Home</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
