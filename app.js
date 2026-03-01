@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initCommissionFlow();
   initContactForm();
+  initPortfolioCarousel();
   applyConfig();
   updatePriceDisplays();
 });
@@ -132,6 +133,115 @@ function applyConfig() {
 
   // Set footer year
   document.getElementById('footerYear').textContent = new Date().getFullYear();
+}
+
+// ---- PORTFOLIO CAROUSEL (infinite loop) ----
+function initPortfolioCarousel() {
+  const carousel = document.getElementById('portfolioCarousel');
+  const track = carousel?.querySelector('.portfolio-track');
+  const prevBtn = document.getElementById('portfolioPrev');
+  const nextBtn = document.getElementById('portfolioNext');
+
+  if (!carousel || !track) return;
+
+  // Clone all slides and append to create seamless loop
+  const originalSlides = Array.from(track.children);
+  originalSlides.forEach(slide => {
+    track.appendChild(slide.cloneNode(true));
+  });
+
+  let isDragging = false;
+  let startX = 0;
+  let currentTranslate = 0;
+  let dragStartTranslate = 0;
+
+  // Width of the original (non-cloned) set of slides
+  function getOriginalWidth() {
+    let w = 0;
+    const gap = 8; // matches CSS gap
+    for (let i = 0; i < originalSlides.length; i++) {
+      w += track.children[i].offsetWidth + gap;
+    }
+    return w;
+  }
+
+  function setTranslate(val, animate) {
+    if (animate) {
+      track.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    } else {
+      track.style.transition = 'none';
+    }
+    currentTranslate = val;
+    track.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  // Wrap position so it loops seamlessly
+  function wrapPosition() {
+    const origW = getOriginalWidth();
+    if (currentTranslate <= -origW) {
+      // Scrolled past all originals — jump back
+      setTranslate(currentTranslate + origW, false);
+    } else if (currentTranslate > 0) {
+      // Scrolled before start — jump to cloned end
+      setTranslate(currentTranslate - origW, false);
+    }
+  }
+
+  // Listen for transition end to silently wrap
+  track.addEventListener('transitionend', wrapPosition);
+
+  // Arrow buttons
+  prevBtn?.addEventListener('click', () => {
+    const step = carousel.offsetWidth * 0.8;
+    setTranslate(currentTranslate + step, true);
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    const step = carousel.offsetWidth * 0.8;
+    setTranslate(currentTranslate - step, true);
+  });
+
+  // Drag / touch to scroll
+  function onDragStart(x) {
+    isDragging = true;
+    startX = x;
+    dragStartTranslate = currentTranslate;
+    track.style.transition = 'none';
+    carousel.style.cursor = 'grabbing';
+  }
+
+  function onDragMove(x) {
+    if (!isDragging) return;
+    const diff = x - startX;
+    currentTranslate = dragStartTranslate + diff;
+    track.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    carousel.style.cursor = 'grab';
+    // Smooth settle then wrap
+    track.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    wrapPosition();
+  }
+
+  // Mouse events
+  carousel.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    onDragStart(e.clientX);
+  });
+  window.addEventListener('mousemove', (e) => onDragMove(e.clientX));
+  window.addEventListener('mouseup', onDragEnd);
+
+  // Touch events
+  carousel.addEventListener('touchstart', (e) => {
+    onDragStart(e.touches[0].clientX);
+  }, { passive: true });
+  carousel.addEventListener('touchmove', (e) => {
+    onDragMove(e.touches[0].clientX);
+  }, { passive: true });
+  carousel.addEventListener('touchend', onDragEnd);
 }
 
 // ---- NAVIGATION ----

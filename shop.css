@@ -3,11 +3,19 @@
    shop.css
    ============================================ */
 
-/* ----- Custom Font ----- */
+/* ----- Custom Fonts ----- */
 @font-face {
   font-family: 'LaLuxes Serif';
   src: url('Branding/Fonts/LaLuxesSerif.woff2') format('woff2'),
        url('Branding/Fonts/LaLuxesSerif.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'La Luxes Script';
+  src: url('Branding/Fonts/La%20Luxes%20Script.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -38,7 +46,7 @@
   --font-display: 'LaLuxes Serif', 'Cormorant Garamond', serif;
   --font-heading: 'Cormorant Garamond', serif;
   --font-body: 'Josefin Sans', sans-serif;
-  --font-script: 'Great Vibes', cursive;
+  --font-script: 'La Luxes Script', 'Great Vibes', cursive;
 
   /* Spacing */
   --space-xs: 0.5rem;
@@ -80,7 +88,7 @@ html {
 body {
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.7;
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -121,9 +129,10 @@ h1, h2, h3, h4 {
 
 .script-label {
   font-family: var(--font-script);
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
   color: var(--color-accent);
   display: block;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 /* ----- Buttons ----- */

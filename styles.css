@@ -3,11 +3,19 @@
    styles.css
    ============================================ */
 
-/* ----- Custom Font ----- */
+/* ----- Custom Fonts ----- */
 @font-face {
   font-family: 'LaLuxes Serif';
   src: url('Branding/Fonts/LaLuxesSerif.woff2') format('woff2'),
        url('Branding/Fonts/LaLuxesSerif.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'La Luxes Script';
+  src: url('Branding/Fonts/La%20Luxes%20Script.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -38,7 +46,7 @@
   --font-display: 'LaLuxes Serif', 'Cormorant Garamond', serif;
   --font-heading: 'Cormorant Garamond', serif;
   --font-body: 'Josefin Sans', sans-serif;
-  --font-script: 'Great Vibes', cursive;
+  --font-script: 'La Luxes Script', 'Great Vibes', cursive;
 
   /* Spacing — generous, gallery-like */
   --space-xs: 0.5rem;
@@ -81,7 +89,7 @@ html {
 body {
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.7;
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -168,14 +176,22 @@ h1, h2, h3, h4 {
 /* ----- Script Label ----- */
 .script-label {
   font-family: var(--font-script);
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
   color: var(--color-accent);
   display: block;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 .script-text {
   font-family: var(--font-script);
   color: var(--color-accent);
+  -webkit-text-stroke: 0.4px currentColor;
+}
+
+/* Thicken La Luxes display font where used */
+.footer-brand,
+.product-title {
+  -webkit-text-stroke: 0.3px currentColor;
 }
 
 /* ----- Buttons ----- */
@@ -424,6 +440,7 @@ h1, h2, h3, h4 {
   position: absolute;
   inset: 0;
   z-index: 0;
+  background: var(--dark-blue);
 }
 
 .hero-video {
@@ -660,82 +677,84 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================
-   PORTFOLIO — Edge-to-Edge Gallery
+   PORTFOLIO — Full-Bleed Carousel
    ============================================ */
 .portfolio {
   background: transparent;
   overflow: hidden;
-}
-
-.portfolio .container {
-  max-width: 100%;
-  padding: 0;
-}
-
-.portfolio .section-header {
-  padding: 0 var(--space-md);
-}
-
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-
-.portfolio-item {
   position: relative;
-  aspect-ratio: 1;
 }
 
-/* Make a few items span 2 columns for visual variety */
-.portfolio-item:nth-child(1) {
-  grid-column: span 2;
-  aspect-ratio: 2 / 1;
+.portfolio-carousel {
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
 }
 
-.portfolio-item:nth-child(8) {
-  grid-column: span 2;
-  aspect-ratio: 2 / 1;
+.portfolio-carousel:active {
+  cursor: grabbing;
+}
+
+.portfolio-track {
+  display: flex;
+  gap: 8px;
+  transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: transform;
+}
+
+.portfolio-slide {
+  flex: 0 0 auto;
+  height: 75vh;
+  min-height: 400px;
+  max-height: 800px;
+  overflow: hidden;
+}
+
+.portfolio-slide img {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* Navigation arrows */
+.portfolio-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.portfolio-prev,
+.portfolio-next {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  background: transparent;
+  transition: all var(--duration) var(--ease);
+}
+
+.portfolio-prev:hover,
+.portfolio-next:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 @media (max-width: 767px) {
-  .portfolio-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .portfolio-slide {
+    height: 55vh;
+    min-height: 300px;
+  }
+
+  .portfolio-track {
     gap: 4px;
   }
-
-  .portfolio-item {
-    aspect-ratio: 1;
-  }
-
-  .portfolio-item:nth-child(1),
-  .portfolio-item:nth-child(8) {
-    grid-column: span 2;
-    aspect-ratio: 2 / 1;
-  }
-}
-
-.portfolio-img-wrap {
-  height: 100%;
-  overflow: hidden;
-  border-radius: 2px;
-  background: var(--warm-cream);
-  box-shadow: 0 4px 24px rgba(38, 45, 60, 0.08);
-}
-
-.portfolio-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1s var(--ease);
-}
-
-.portfolio-item:hover .portfolio-img-wrap img {
-  transform: scale(1.03);
-}
-
-.portfolio-item:hover .portfolio-img-wrap {
-  box-shadow: 0 8px 40px rgba(38, 45, 60, 0.14);
 }
 
 /* ============================================
