@@ -22,7 +22,9 @@ const CONFIG = {
   startingAtSizes: ['48x48'],
   channeledPremium: 0,         // Extra cost for fully channeled (0 if same price)
   depositPercent: 50,
+  depositSurchargePercent: 7,    // % increase for 50% deposit option
   paymentPlanInstallments: 3,
+  paymentPlanSurchargePercent: 10, // % increase for payment plan option
 
   // Stripe Payment Links — map to your actual Stripe links
   // Format: 'description': 'https://buy.stripe.com/...'
@@ -63,12 +65,26 @@ const state = {
   email: '',
   phone: '',
   additionalNotes: '',
-  paymentOption: null
+  paymentOption: null,
+  deliveryWindow: null,
+  rushRequested: false,
+  giftMessage: '',
+  shippingMethod: null,
+  shippingName: '',
+  shippingStreet: '',
+  shippingCity: '',
+  shippingState: '',
+  shippingZip: ''
 };
 
 // Step sequences based on path
-const STEPS_VISION = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const STEPS_CHANNELED = [0, 1, 2, 3, 4, 7, 8, 9, 10];
+const STEPS_VISION = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+const STEPS_CHANNELED = [0, 1, 2, 3, 7, 8, 9, 10, 11, 12, 13, 14];
+
+// Print add-on quantities
+const printAddOns = { '5x7': 0, '8x10': 0, '11x14': 0 };
+const printAddOnPrices = { '5x7': 25, '8x10': 40, '11x14': 65 };
+const IMAGE_CAPTURE_FEE = 75;
 
 function getStepSequence() {
   if (state.approach === 'channeled') return STEPS_CHANNELED;
@@ -94,14 +110,14 @@ const confirmationModal = document.getElementById('confirmationModal');
 const siteNav = document.getElementById('siteNav');
 
 // ---- INITIALIZATION ----
-// Always start at top on page load/refresh
+// Start at top on fresh page load (not anchor clicks)
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
-if (window.location.hash) window.location.hash = '';
-window.scrollTo(0, 0);
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.scrollTo(0, 0);
-  requestAnimationFrame(() => window.scrollTo(0, 0));
+  // Only scroll to top if there's no hash (user didn't click an anchor link)
+  if (!window.location.hash) {
+    window.scrollTo(0, 0);
+  }
   initNav();
   initScrollAnimations();
   initCommissionFlow();
@@ -109,11 +125,74 @@ document.addEventListener('DOMContentLoaded', () => {
   initPortfolioCarousel();
   applyConfig();
   updatePriceDisplays();
-});
 
-// Catch the browser's late scroll restoration after all resources load
-window.addEventListener('load', () => {
-  window.scrollTo(0, 0);
+  // Restore commission flow session if page was refreshed mid-flow
+  if (restoreSession()) {
+    commissionFlow.classList.add('active');
+    commissionFlow.setAttribute('aria-hidden', 'false');
+    siteNav.classList.add('hidden');
+    document.body.classList.add('flow-open');
+
+    // Restore selected option cards visually
+    const fieldMap = {
+      subject: state.subject,
+      subjectCount: state.subjectCount ? String(state.subjectCount) : null,
+      energy: state.energy,
+      approach: state.approach,
+      style: state.style,
+      colorPalette: state.colorPalette,
+      size: state.size,
+      shippingMethod: state.shippingMethod
+    };
+    Object.entries(fieldMap).forEach(([field, val]) => {
+      if (!val) return;
+      const card = document.querySelector(`[data-field="${field}"] .option-card[data-value="${val}"]`);
+      if (card) card.classList.add('selected');
+    });
+
+    // Restore text inputs
+    const inputMap = {
+      'energyNote': state.energyNote,
+      'customColorInput': state.customColors,
+      'contactName': state.name,
+      'contactEmail': state.email,
+      'contactPhone': state.phone,
+      'additionalNotes': state.additionalNotes,
+      'giftNote': state.giftMessage,
+      'shippingName': state.shippingName,
+      'shippingStreet': state.shippingStreet,
+      'shippingCity': state.shippingCity,
+      'shippingState': state.shippingState,
+      'shippingZip': state.shippingZip
+    };
+    Object.entries(inputMap).forEach(([id, val]) => {
+      if (!val) return;
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+
+    // Restore print add-on quantities
+    Object.entries(printAddOns).forEach(([size, qty]) => {
+      const el = document.querySelector(`.addon-qty-value[data-size="${size}"]`);
+      if (el) el.textContent = String(qty);
+    });
+
+    // Show custom color group if needed
+    if (state.colorPalette === 'custom') {
+      document.getElementById('customColorGroup').style.display = 'block';
+    }
+
+    // Show shipping address if shipped
+    if (state.shippingMethod === 'shipped') {
+      document.getElementById('shippingAddressGroup').style.display = 'block';
+      document.getElementById('shippingContinueBtn').style.display = 'inline-block';
+    } else if (state.shippingMethod === 'hand-delivered') {
+      document.getElementById('handDeliveredNote').style.display = 'block';
+      document.getElementById('shippingContinueBtn').style.display = 'inline-block';
+    }
+
+    goToStep(state.currentStep);
+  }
 });
 
 // ---- APPLY CONFIG ----
@@ -278,6 +357,10 @@ function initNav() {
     openCommissionFlow();
   });
 
+  document.getElementById('testimonialsCommissionBtn').addEventListener('click', () => {
+    openCommissionFlow();
+  });
+
   // Nav scroll behavior — transparent over hero, solid when scrolled
   const handleNavScroll = () => {
     const scrolled = window.scrollY > 80;
@@ -375,6 +458,55 @@ function initCommissionFlow() {
     });
   });
 
+  // Written message / reading donation toggle
+  document.querySelectorAll('[data-field="wantsReading"] .option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const donationGroup = document.getElementById('donationGroup');
+      donationGroup.style.display = card.dataset.value === 'yes' ? 'block' : 'none';
+    });
+  });
+
+  // Print add-on toggle
+  document.querySelectorAll('[data-field="wantsPrints"] .option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const printGroup = document.getElementById('printAddOnGroup');
+      printGroup.style.display = card.dataset.value === 'yes' ? 'block' : 'none';
+    });
+  });
+
+  // Shipping method toggle
+  document.querySelectorAll('[data-field="shippingMethod"] .option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const addressGroup = document.getElementById('shippingAddressGroup');
+      const handNote = document.getElementById('handDeliveredNote');
+      const continueBtn = document.getElementById('shippingContinueBtn');
+      if (card.dataset.value === 'shipped') {
+        addressGroup.style.display = 'block';
+        handNote.style.display = 'none';
+      } else {
+        addressGroup.style.display = 'none';
+        handNote.style.display = 'block';
+      }
+      continueBtn.style.display = 'inline-block';
+    });
+  });
+
+  // Print add-on quantity buttons
+  document.querySelectorAll('.addon-plus').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const size = btn.dataset.size;
+      printAddOns[size]++;
+      document.querySelector(`.addon-qty-value[data-size="${size}"]`).textContent = printAddOns[size];
+    });
+  });
+  document.querySelectorAll('.addon-minus').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const size = btn.dataset.size;
+      if (printAddOns[size] > 0) printAddOns[size]--;
+      document.querySelector(`.addon-qty-value[data-size="${size}"]`).textContent = printAddOns[size];
+    });
+  });
+
   // File upload
   initFileUpload();
 
@@ -421,10 +553,12 @@ function closeCommissionFlow() {
   commissionFlow.setAttribute('aria-hidden', 'true');
   siteNav.classList.remove('hidden');
   document.body.classList.remove('flow-open');
+  clearSession();
 }
 
 function goToStep(stepNum) {
   state.currentStep = stepNum;
+  saveSession();
 
   // Hide all steps, show active
   document.querySelectorAll('.flow-step').forEach(el => {
@@ -457,8 +591,88 @@ function goToStep(stepNum) {
     updatePriceDisplays();
   }
 
-  // If we're on the summary step, populate it
-  if (stepNum === 10) {
+  // Written message step — customize wording based on who the portrait is for
+  if (stepNum === 11) {
+    const subject = state.subject;
+    const msgStep = document.querySelector('[data-step="11"]');
+    const msgH2 = msgStep.querySelector('h2');
+    const msgP = msgStep.querySelector('p');
+    const giftNoteGroup = document.getElementById('giftNoteGroup');
+    const channeledGroup = document.getElementById('channeledMessageGroup');
+
+    if (subject === 'loved-one') {
+      // Gift path — personal note replaces channeled message
+      msgH2.textContent = 'Would you like to include a personal note?';
+      msgP.textContent = 'Write a heartfelt message to accompany the portrait — it will be handwritten and included with the gift.';
+      giftNoteGroup.style.display = 'block';
+      channeledGroup.style.display = 'none';
+    } else {
+      // All other paths — channeled message
+      giftNoteGroup.style.display = 'none';
+      channeledGroup.style.display = 'block';
+
+      if (subject === 'passed') {
+        msgH2.textContent = 'Would you like a written message from your loved one?';
+        msgP.textContent = 'During the creation of your portrait, Brittany can tune in and receive a personal written message from your loved one who has passed. This is offered by donation.';
+      } else if (subject === 'myself') {
+        msgH2.textContent = 'Would you like a message from your higher self?';
+        msgP.textContent = 'During the creation of your portrait, Brittany can tune in and receive a personal written message from your higher self — words of guidance, love, and truth. This is offered by donation.';
+      } else if (subject === 'family') {
+        msgH2.textContent = 'Would you like a personal message for the family?';
+        msgP.textContent = 'Brittany can tune in and receive a written message for your family — something meaningful to accompany the portrait. This is offered by donation.';
+      } else {
+        msgH2.textContent = 'Would you like a personal written message included?';
+        msgP.textContent = 'Brittany can tune in and receive a personal written message to accompany your portrait. This is offered by donation.';
+      }
+    }
+  }
+
+  // If we're on the timeline step, build the delivery window grid
+  if (stepNum === 9) {
+    buildTimelineGrid();
+  }
+
+  // If we're on the shipping step, capture shipping fields
+  if (stepNum === 13) {
+    // Restore shipping UI state if revisiting
+    if (state.shippingMethod) {
+      const addressGroup = document.getElementById('shippingAddressGroup');
+      const handNote = document.getElementById('handDeliveredNote');
+      const continueBtn = document.getElementById('shippingContinueBtn');
+      if (state.shippingMethod === 'shipped') {
+        addressGroup.style.display = 'block';
+        handNote.style.display = 'none';
+      } else {
+        addressGroup.style.display = 'none';
+        handNote.style.display = 'block';
+      }
+      continueBtn.style.display = 'inline-block';
+    }
+  }
+
+  // If we're on the summary step, capture add-ons + shipping then populate
+  if (stepNum === 14) {
+    // Capture rush checkbox
+    state.rushRequested = document.getElementById('rushCheckbox').checked;
+
+    // Capture gift message if on gift path
+    if (state.subject === 'loved-one') {
+      state.giftMessage = document.getElementById('giftMessage').value.trim();
+    }
+    if (state.wantsReading === 'yes') {
+      state.donationAmount = document.getElementById('donationAmount').value.trim();
+    }
+    state.printAddOns = { ...printAddOns };
+
+    // Capture shipping info
+    if (state.shippingMethod === 'shipped') {
+      state.shippingName = document.getElementById('shippingName').value.trim();
+      state.shippingStreet = document.getElementById('shippingStreet').value.trim();
+      state.shippingCity = document.getElementById('shippingCity').value.trim();
+      state.shippingState = document.getElementById('shippingState').value.trim();
+      state.shippingZip = document.getElementById('shippingZip').value.trim();
+    }
+
     populateSummary();
   }
 
@@ -486,8 +700,8 @@ function updateProgress() {
 
 function updateDynamicStepNumbers() {
   if (state.approach === 'channeled') {
-    // Steps 7, 8, 9 become 05, 06, 07
-    const mapping = { 7: '05', 8: '06', 9: '07' };
+    // Channeled skips steps 4,5,6 — renumber from 7 onward
+    const mapping = { 7: '04', 8: '05', 9: '06', 10: '07', 11: '08', 12: '09', 13: '10', 14: '11' };
     document.querySelectorAll('.dynamic-step-num').forEach(el => {
       const step = el.closest('.flow-step');
       if (step && mapping[step.dataset.step]) {
@@ -496,7 +710,7 @@ function updateDynamicStepNumbers() {
     });
   } else {
     // Reset to normal
-    const mapping = { 7: '07', 8: '08', 9: '09' };
+    const mapping = { 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12', 13: '13', 14: '14' };
     document.querySelectorAll('.dynamic-step-num').forEach(el => {
       const step = el.closest('.flow-step');
       if (step && mapping[step.dataset.step]) {
@@ -525,12 +739,12 @@ function handleOptionSelect(grid, card) {
   const forkField = 'approach';
 
   if (field === forkField) {
-    // Fork: go to step 5 (vision) or step 7 (channeled)
+    // Fork: go to step 4 (energy/vision) or step 7 (channeled)
     setTimeout(() => {
       if (value === 'channeled') {
         goToStep(7);
       } else {
-        goToStep(5);
+        goToStep(4);
       }
     }, 300);
   } else if (autoAdvanceFields.includes(field)) {
@@ -543,7 +757,17 @@ function handleOptionSelect(grid, card) {
       }
     }, 300);
   }
-  // For energy and colorPalette, user must click "Continue" (not auto-advance)
+  // colorPalette auto-advances unless "custom" is selected (needs textarea)
+  if (field === 'colorPalette' && value !== 'custom') {
+    setTimeout(() => {
+      const sequence = getStepSequence();
+      const currentIndex = getCurrentStepIndex();
+      if (currentIndex < sequence.length - 1) {
+        goToStep(sequence[currentIndex + 1]);
+      }
+    }, 300);
+  }
+  // For energy, user must click "Continue" (not auto-advance)
 }
 
 function restoreSelections(stepNum) {
@@ -608,7 +832,151 @@ function calculateTotal() {
 
   const basePrice = sizeData[subjects] || 0;
   const channeledExtra = state.approach === 'channeled' ? CONFIG.channeledPremium : 0;
-  return basePrice + channeledExtra;
+
+  // Print add-on total
+  let printTotal = 0;
+  for (const [size, qty] of Object.entries(printAddOns)) {
+    printTotal += qty * (printAddOnPrices[size] || 0);
+  }
+
+  // Image capture fee — added when any print add-on is selected
+  const hasAnyPrints = Object.values(printAddOns).some(qty => qty > 0);
+  const imageCaptureFee = hasAnyPrints ? IMAGE_CAPTURE_FEE : 0;
+
+  // Donation amount
+  const donation = state.donationAmount ? parseFloat(state.donationAmount) || 0 : 0;
+
+  return basePrice + channeledExtra + printTotal + imageCaptureFee + donation;
+}
+
+// ---- TIMELINE / DELIVERY WINDOW ----
+function buildTimelineGrid() {
+  const grid = document.getElementById('timelineGrid');
+  const continueBtn = document.getElementById('timelineContinueBtn');
+  const rushNotice = document.getElementById('rushNotice');
+
+  // Update subtitle with size-specific lead time
+  const subtitle = document.getElementById('timelineSubtitle');
+  const rushWeeks = RUSH_WEEKS_BY_SIZE[state.size] || 6;
+  const leadTimes = { '8x10': '4–6', '11x14': '6–8', '16x20': '8–12', '18x24': '8–12', '24x30': '10–14', '24x36': '10–14', '36x36': '12–16', '48x48': '14–20' };
+  const timeRange = leadTimes[state.size] || '4–8';
+  subtitle.textContent = `A ${state.size}" portrait typically takes ${timeRange} weeks. Select your preferred delivery window below.`;
+
+  // Render the grid synchronously first, then apply blocked windows from server
+  renderTimelineWindows(grid, continueBtn, rushNotice, []);
+
+  // Try to fetch blocked windows (won't work on file://, that's fine)
+  fetch('/api/availability')
+    .then(res => res.json())
+    .then(data => {
+      const blocked = data.blockedWindows || [];
+      if (blocked.length > 0) {
+        renderTimelineWindows(grid, continueBtn, rushNotice, blocked);
+      }
+    })
+    .catch(() => { /* Server unavailable — all windows stay available */ });
+}
+
+// Minimum lead times (weeks) per size — anything under this is a rush
+const RUSH_WEEKS_BY_SIZE = {
+  '8x10':  4,
+  '11x14': 6,
+  '16x20': 8,
+  '18x24': 8,
+  '24x30': 10,
+  '24x36': 10,
+  '36x36': 12,
+  '48x48': 14
+};
+
+function renderTimelineWindows(grid, continueBtn, rushNotice, blockedWindows) {
+  grid.innerHTML = '';
+
+  const now = new Date();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const periods = ['early', 'mid', 'late'];
+  const RUSH_WEEKS = RUSH_WEEKS_BY_SIZE[state.size] || 6;
+
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const monthLabel = months[d.getMonth()] + ' ' + d.getFullYear();
+    const yearMonth = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+
+    const monthEl = document.createElement('div');
+    monthEl.className = 'timeline-month';
+    monthEl.innerHTML = `<div class="timeline-month-label">${monthLabel}</div>`;
+
+    const windowsEl = document.createElement('div');
+    windowsEl.className = 'timeline-windows';
+
+    periods.forEach(p => {
+      const key = yearMonth + '-' + p;
+      const isBlocked = blockedWindows.includes(key);
+
+      // Calculate approximate date for rush detection
+      const approxDay = p === 'early' ? 5 : p === 'mid' ? 15 : 25;
+      const windowDate = new Date(d.getFullYear(), d.getMonth(), approxDay);
+      const weeksAway = (windowDate - now) / (1000 * 60 * 60 * 24 * 7);
+      const isRush = weeksAway > 0 && weeksAway < RUSH_WEEKS;
+      const isPast = weeksAway < 0;
+
+      const btn = document.createElement('button');
+      btn.className = 'timeline-window';
+      btn.dataset.window = key;
+      btn.innerHTML = `<span class="window-label">${p.charAt(0).toUpperCase() + p.slice(1)}</span>`;
+
+      if (isBlocked || isPast) {
+        btn.classList.add('blocked');
+        btn.disabled = true;
+      } else if (isRush) {
+        btn.classList.add('rush');
+        btn.innerHTML += `<span class="rush-badge">Rush</span>`;
+      }
+
+      btn.addEventListener('click', () => {
+        grid.querySelectorAll('.timeline-window').forEach(w => w.classList.remove('selected'));
+        btn.classList.add('selected');
+        state.deliveryWindow = key;
+
+        const isRushSelection = btn.classList.contains('rush');
+        rushNotice.style.display = isRushSelection ? 'block' : 'none';
+
+        // If rush, require acknowledgment before showing continue
+        if (isRushSelection) {
+          const checkbox = document.getElementById('rushCheckbox');
+          checkbox.checked = false;
+          continueBtn.style.display = 'none';
+          checkbox.onchange = () => {
+            continueBtn.style.display = checkbox.checked ? 'inline-block' : 'none';
+          };
+        } else {
+          continueBtn.style.display = 'inline-block';
+        }
+      });
+
+      windowsEl.appendChild(btn);
+    });
+
+    monthEl.appendChild(windowsEl);
+    grid.appendChild(monthEl);
+  }
+
+  // Restore selection if revisiting
+  if (state.deliveryWindow) {
+    const selected = grid.querySelector(`[data-window="${state.deliveryWindow}"]`);
+    if (selected && !selected.disabled) {
+      selected.classList.add('selected');
+      continueBtn.style.display = 'inline-block';
+      rushNotice.style.display = selected.classList.contains('rush') ? 'block' : 'none';
+    }
+  }
+}
+
+function formatDeliveryWindow(key) {
+  if (!key) return '—';
+  const [year, month, period] = key.split('-');
+  const months = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${period.charAt(0).toUpperCase() + period.slice(1)} ${months[parseInt(month)]} ${year}`;
 }
 
 // ---- FILE UPLOAD ----
@@ -717,9 +1085,13 @@ function handleReview() {
   if (state.colorPalette === 'custom') {
     state.customColors = document.getElementById('customColors').value.trim();
   }
+  if (state.wantsReading === 'yes') {
+    state.donationAmount = document.getElementById('donationAmount').value.trim();
+  }
+  state.printAddOns = { ...printAddOns };
 
-  // Go to summary
-  goToStep(10);
+  // Go to shipping
+  goToStep(13);
 }
 
 function populateSummary() {
@@ -735,7 +1107,9 @@ function populateSummary() {
     approach: 'Approach',
     style: 'Style',
     colorPalette: 'Color Palette',
-    size: 'Size'
+    size: 'Size',
+    wantsReading: 'Written Message',
+    wantsPrints: 'Print Add-Ons'
   };
 
   const formatValue = (key, val) => {
@@ -743,10 +1117,12 @@ function populateSummary() {
     const maps = {
       subject: { 'myself': 'Myself', 'loved-one': 'A Loved One (Gift)', 'family': 'A Family / Group', 'pet': 'A Pet', 'passed': 'Someone Who Has Passed', 'other': 'Other' },
       energy: { 'healing': 'Healing', 'celebration': 'Celebration', 'remembrance': 'Remembrance', 'love': 'Love', 'empowerment': 'Empowerment', 'transformation': 'Transformation', 'channel': 'Let Brittany Channel' },
-      approach: { 'vision': 'I Have a Vision', 'channeled': 'Fully Channeled ✦' },
+      approach: { 'vision': 'I Have a Vision', 'channeled': 'Fully Channeled' },
       style: { 'colored-pencil': 'Colored Pencil', 'painted': 'Painted', 'mixed-media': 'Mixed Media', 'brittanys-choice': "Brittany's Choice" },
       colorPalette: { 'warm': 'Warm Tones', 'cool': 'Cool Tones', 'neutral': 'Neutral & Soft', 'bold': 'Bold & Vibrant', 'channel': 'Let Brittany Channel', 'custom': 'Custom' },
-      size: { '8x10': '8 × 10', '11x14': '11 × 14', '16x20': '16 × 20', '18x24': '18 × 24', '24x30': '24 × 30', '24x36': '24 × 36', '36x36': '36 × 36', '48x48': '48 × 48', 'custom': 'Custom Size' }
+      size: { '8x10': '8 × 10', '11x14': '11 × 14', '16x20': '16 × 20', '18x24': '18 × 24', '24x30': '24 × 30', '24x36': '24 × 36', '36x36': '36 × 36', '48x48': '48 × 48', 'custom': 'Custom Size' },
+      wantsReading: { 'yes': 'Yes (by donation)', 'no': 'No' },
+      wantsPrints: { 'yes': 'Yes', 'no': 'No' }
     };
     return maps[key] ? (maps[key][val] || val) : val;
   };
@@ -763,12 +1139,83 @@ function populateSummary() {
     </div>`;
   }
 
+  // Delivery window
+  if (state.deliveryWindow) {
+    let windowText = formatDeliveryWindow(state.deliveryWindow);
+    if (state.rushRequested) windowText += ' (Rush Requested)';
+    html += `<div class="summary-row">
+      <span class="summary-label">Delivery Window</span>
+      <span class="summary-value">${windowText}</span>
+    </div>`;
+  }
+
+  // Gift message
+  if (state.subject === 'loved-one' && state.giftMessage) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Personal Note</span>
+      <span class="summary-value">${state.giftMessage}</span>
+    </div>`;
+  }
+
   // Add photos count
   if (state.photos.length > 0) {
     html += `<div class="summary-row">
       <span class="summary-label">Reference Photos</span>
       <span class="summary-value">${state.photos.length} uploaded</span>
     </div>`;
+  }
+
+  // Add print add-on details
+  const addOnEntries = Object.entries(printAddOns).filter(([, qty]) => qty > 0);
+  if (addOnEntries.length > 0) {
+    addOnEntries.forEach(([size, qty]) => {
+      const price = qty * printAddOnPrices[size];
+      html += `<div class="summary-row">
+        <span class="summary-label">Print: ${size}</span>
+        <span class="summary-value">${qty} × $${printAddOnPrices[size]} = $${price}</span>
+      </div>`;
+    });
+  }
+
+  // Add custom print request
+  const customReq = document.getElementById('customPrintRequest');
+  if (customReq && customReq.value.trim()) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Custom Request</span>
+      <span class="summary-value">${customReq.value.trim()}</span>
+    </div>`;
+  }
+
+  // Image capture fee line (when prints are selected)
+  const hasAnyPrints = Object.values(printAddOns).some(qty => qty > 0);
+  if (hasAnyPrints) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Image Capture Fee</span>
+      <span class="summary-value">$${IMAGE_CAPTURE_FEE}</span>
+    </div>`;
+  }
+
+  // Add donation amount
+  if (state.wantsReading === 'yes' && state.donationAmount) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Written Message Donation</span>
+      <span class="summary-value">$${state.donationAmount}</span>
+    </div>`;
+  }
+
+  // Shipping info
+  if (state.shippingMethod) {
+    const shippingLabel = state.shippingMethod === 'shipped' ? 'Shipped' : 'Hand Delivered';
+    html += `<div class="summary-row">
+      <span class="summary-label">Delivery</span>
+      <span class="summary-value">${shippingLabel}</span>
+    </div>`;
+    if (state.shippingMethod === 'shipped' && state.shippingStreet) {
+      html += `<div class="summary-row">
+        <span class="summary-label">Ship To</span>
+        <span class="summary-value">${state.shippingName}<br>${state.shippingStreet}<br>${state.shippingCity}, ${state.shippingState} ${state.shippingZip}</span>
+      </div>`;
+    }
   }
 
   card.innerHTML = html;
@@ -781,9 +1228,11 @@ function populateSummary() {
     totalEl.textContent = 'Pricing to be determined';
   }
 
-  // Payment options
-  const deposit = Math.round(total * (CONFIG.depositPercent / 100));
-  const planAmount = Math.round(total / CONFIG.paymentPlanInstallments);
+  // Payment options (with surcharges for non-full-pay options)
+  const depositTotal = Math.round(total * (1 + CONFIG.depositSurchargePercent / 100));
+  const depositNow = Math.round(depositTotal * (CONFIG.depositPercent / 100));
+  const planTotal = Math.round(total * (1 + CONFIG.paymentPlanSurchargePercent / 100));
+  const planAmount = Math.round(planTotal / CONFIG.paymentPlanInstallments);
 
   let paymentHtml = '';
 
@@ -792,17 +1241,17 @@ function populateSummary() {
       <a href="${CONFIG.stripeLinks.full || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="full">
         <div class="payment-card-title">Pay in Full</div>
         <div class="payment-card-amount">$${total}</div>
-        <div class="payment-card-note">One-time payment</div>
+        <div class="payment-card-note">Best price — one-time payment</div>
       </a>
       <a href="${CONFIG.stripeLinks.deposit || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="deposit">
         <div class="payment-card-title">${CONFIG.depositPercent}% Deposit</div>
-        <div class="payment-card-amount">$${deposit}</div>
-        <div class="payment-card-note">Remaining before delivery</div>
+        <div class="payment-card-amount">$${depositNow} now</div>
+        <div class="payment-card-note">$${depositTotal} total (+${CONFIG.depositSurchargePercent}%)</div>
       </a>
       <a href="${CONFIG.stripeLinks.plan || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="plan">
         <div class="payment-card-title">Payment Plan</div>
         <div class="payment-card-amount">${CONFIG.paymentPlanInstallments} × $${planAmount}</div>
-        <div class="payment-card-note">${CONFIG.paymentPlanInstallments} installments</div>
+        <div class="payment-card-note">$${planTotal} total (+${CONFIG.paymentPlanSurchargePercent}%)</div>
       </a>`;
   } else {
     paymentHtml = `
@@ -833,12 +1282,14 @@ function populateSummary() {
 async function handleCommissionPayment(paymentType) {
   const total = calculateTotal();
 
-  // Calculate actual charge amount based on payment type
+  // Calculate actual charge amount based on payment type (with surcharges)
   let chargeAmount = total;
   if (paymentType === 'deposit') {
-    chargeAmount = Math.round(total * (CONFIG.depositPercent / 100));
+    const depositTotal = Math.round(total * (1 + CONFIG.depositSurchargePercent / 100));
+    chargeAmount = Math.round(depositTotal * (CONFIG.depositPercent / 100));
   } else if (paymentType === 'plan') {
-    chargeAmount = Math.round(total / CONFIG.paymentPlanInstallments);
+    const planTotal = Math.round(total * (1 + CONFIG.paymentPlanSurchargePercent / 100));
+    chargeAmount = Math.round(planTotal / CONFIG.paymentPlanInstallments);
   }
 
   // Step 1: Save order to server
@@ -856,6 +1307,15 @@ async function handleCommissionPayment(paymentType) {
     customColors: state.customColors,
     size: state.size,
     additionalNotes: state.additionalNotes,
+    deliveryWindow: state.deliveryWindow,
+    rushRequested: state.rushRequested,
+    giftMessage: state.giftMessage,
+    shippingMethod: state.shippingMethod,
+    shippingName: state.shippingName,
+    shippingStreet: state.shippingStreet,
+    shippingCity: state.shippingCity,
+    shippingState: state.shippingState,
+    shippingZip: state.shippingZip,
     photoCount: state.photos.length,
     total,
     paymentType
@@ -940,7 +1400,47 @@ function clearFormErrors() {
 }
 
 // ---- RESET STATE ----
+// ---- SESSION PERSISTENCE ----
+function saveSession() {
+  try {
+    sessionStorage.setItem('ba_flow_state', JSON.stringify(state));
+    sessionStorage.setItem('ba_flow_prints', JSON.stringify(printAddOns));
+    sessionStorage.setItem('ba_flow_active', 'true');
+  } catch (e) { /* ignore */ }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem('ba_flow_state');
+    sessionStorage.removeItem('ba_flow_prints');
+    sessionStorage.removeItem('ba_flow_active');
+  } catch (e) { /* ignore */ }
+}
+
+function restoreSession() {
+  try {
+    if (sessionStorage.getItem('ba_flow_active') !== 'true') return false;
+    const saved = sessionStorage.getItem('ba_flow_state');
+    if (!saved) return false;
+
+    const parsed = JSON.parse(saved);
+    Object.assign(state, parsed);
+
+    // Restore print add-on quantities
+    const savedPrints = sessionStorage.getItem('ba_flow_prints');
+    if (savedPrints) {
+      const parsedPrints = JSON.parse(savedPrints);
+      Object.assign(printAddOns, parsedPrints);
+    }
+
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function resetState() {
+  clearSession();
   Object.assign(state, {
     currentStep: 0,
     subject: null,
@@ -957,7 +1457,16 @@ function resetState() {
     email: '',
     phone: '',
     additionalNotes: '',
-    paymentOption: null
+    paymentOption: null,
+    deliveryWindow: null,
+    rushRequested: false,
+    giftMessage: '',
+    shippingMethod: null,
+    shippingName: '',
+    shippingStreet: '',
+    shippingCity: '',
+    shippingState: '',
+    shippingZip: ''
   });
 
   // Reset form inputs
@@ -966,5 +1475,19 @@ function resetState() {
   document.querySelectorAll('.flow-step input').forEach(i => { i.value = ''; });
   document.getElementById('uploadPreviews').innerHTML = '';
   document.getElementById('customColorGroup').style.display = 'none';
+  document.getElementById('donationGroup').style.display = 'none';
+  document.getElementById('printAddOnGroup').style.display = 'none';
+  document.getElementById('shippingAddressGroup').style.display = 'none';
+  document.getElementById('handDeliveredNote').style.display = 'none';
+  document.getElementById('shippingContinueBtn').style.display = 'none';
+  document.getElementById('timelineContinueBtn').style.display = 'none';
+  document.getElementById('rushNotice').style.display = 'none';
+  document.getElementById('rushCheckbox').checked = false;
+  // Reset print add-on quantities
+  Object.keys(printAddOns).forEach(size => {
+    printAddOns[size] = 0;
+    const el = document.querySelector(`.addon-qty-value[data-size="${size}"]`);
+    if (el) el.textContent = '0';
+  });
   clearFormErrors();
 }

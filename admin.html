@@ -295,6 +295,55 @@
       font-size: 0.85rem;
     }
 
+    .admin-timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-timeline-month {
+      background: #f8f8f8;
+      border-radius: 6px;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    .admin-timeline-month-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+      opacity: 0.7;
+    }
+
+    .admin-timeline-windows {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .admin-window-btn {
+      flex: 1;
+      padding: 0.35rem 0.2rem;
+      font-size: 0.7rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .admin-window-btn:hover {
+      border-color: #aaa;
+    }
+
+    .admin-window-btn.blocked {
+      background: #e0e0e0;
+      color: #999;
+      text-decoration: line-through;
+    }
+
     .section-title {
       font-family: var(--font-heading);
       font-size: 1.35rem;
@@ -445,6 +494,11 @@
           <span class="toggle-label">Enable Waitlist (when full)</span>
         </div>
 
+        <label style="display:block; font-size:0.8rem; letter-spacing:0.04em; text-transform:uppercase; opacity:0.7; margin-bottom:0.75rem; margin-top:1.5rem;">Delivery Windows (click to block/unblock)</label>
+        <div class="admin-timeline-grid" id="adminTimelineGrid">
+          <!-- Rendered by JS -->
+        </div>
+
         <div class="form-group">
           <label>Blackout Message (optional — shown on site when set)</label>
           <textarea id="blackoutMessage" rows="3" placeholder="e.g., Taking a creative sabbatical in December. Commissions reopen January 2027."></textarea>
@@ -578,9 +632,53 @@
             </div>
           `;
         });
+        // Delivery windows
+        renderAdminTimeline(data.blockedWindows || []);
       } catch (e) {
         console.error('Failed to load availability:', e);
       }
+    }
+
+    function renderAdminTimeline(blockedWindows) {
+      const grid = document.getElementById('adminTimelineGrid');
+      grid.innerHTML = '';
+      const now = new Date();
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const periods = ['early','mid','late'];
+
+      for (let i = 0; i < 12; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+        const monthLabel = months[d.getMonth()] + ' ' + d.getFullYear();
+        const yearMonth = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+
+        let html = `<div class="admin-timeline-month">
+          <div class="admin-timeline-month-label">${monthLabel}</div>
+          <div class="admin-timeline-windows">`;
+
+        periods.forEach(p => {
+          const key = yearMonth + '-' + p;
+          const isBlocked = blockedWindows.includes(key);
+          html += `<button class="admin-window-btn${isBlocked ? ' blocked' : ''}" data-window="${key}">${p.charAt(0).toUpperCase() + p.slice(1)}</button>`;
+        });
+
+        html += `</div></div>`;
+        grid.innerHTML += html;
+      }
+
+      // Toggle click handler
+      grid.querySelectorAll('.admin-window-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('blocked');
+        });
+      });
+    }
+
+    function getBlockedWindows() {
+      const blocked = [];
+      document.querySelectorAll('.admin-window-btn.blocked').forEach(btn => {
+        blocked.push(btn.dataset.window);
+      });
+      return blocked;
     }
 
     document.getElementById('saveAvailability').addEventListener('click', async () => {
@@ -600,7 +698,8 @@
         leadTimes,
         additionalSubjectWeeks: parseInt(document.getElementById('additionalSubjectWeeks').value) || 0,
         waitlistEnabled: document.getElementById('toggleWaitlist').classList.contains('on'),
-        blackoutMessage: document.getElementById('blackoutMessage').value.trim() || null
+        blackoutMessage: document.getElementById('blackoutMessage').value.trim() || null,
+        blockedWindows: getBlockedWindows()
       };
 
       try {

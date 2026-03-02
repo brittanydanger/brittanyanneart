@@ -65,7 +65,8 @@ function getDefaultDB() {
       },
       additionalSubjectWeeks: 1,
       blackoutMessage: null,
-      waitlistEnabled: false
+      waitlistEnabled: false,
+      blockedWindows: []
     },
     orders: [],
     contacts: [],

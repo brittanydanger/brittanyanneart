@@ -21,8 +21,8 @@ const SHOP_CONFIG = {
       id: 'print-001',
       title: 'Heaven Sent',
       description: 'A child wrapped in the warmth of heaven — soft pink clouds parting as she steps forward in white. This piece carries the energy of innocence, divine purpose, and the sacred moment a soul arrives earthside.',
-      image: 'images/art%20images/Britt%20Anne%20Art%2010.jpg',
-      images: ['images/art%20images/Britt%20Anne%20Art%2010.jpg'],
+      image: 'images/Prints/Christ%20coming%20for%20Claire%20II.jpg',
+      images: ['images/Prints/Christ%20coming%20for%20Claire%20II.jpg'],
       category: 'sacred',
       tags: ['new'],
       placeholderColor: '#F2C4B0',
@@ -37,8 +37,8 @@ const SHOP_CONFIG = {
       id: 'print-002',
       title: 'Well Done',
       description: 'A sacred reunion — the moment of being welcomed home with open arms and radiant joy. This piece channels the energy of divine love, recognition, and the promise that you are known and celebrated beyond the veil.',
-      image: 'images/art%20images/Britt%20Anne%20Art%208.jpg',
-      images: ['images/art%20images/Britt%20Anne%20Art%208.jpg'],
+      image: 'images/Prints/IMG_9723.jpg',
+      images: ['images/Prints/IMG_9723.jpg'],
       category: 'sacred',
       tags: [],
       placeholderColor: '#C9B48A',
@@ -48,6 +48,50 @@ const SHOP_CONFIG = {
         '11x14': { price: 65,  stripePriceId: '' }
       },
       sortOrder: 2
+    },
+    {
+      id: 'print-003',
+      title: 'Birth Affirmation Cards — Non-Religious',
+      description: 'A set of 20 beautifully hand-drawn 8×10 birth affirmation cards in earthy, soothing tones. Designed to ground and empower you through labor and delivery. Display them in your birth space as visual anchors of calm and strength.',
+      image: 'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20NR.jpg',
+      images: [
+        'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20NR.jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/2%20Visual%20Design%20-%20done.jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/3%20Diverse%20Affirmations%20-%20done.jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/5%20Group%20of%20Cards%20-%20done.jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/6%20Quality%20-%20done.jpg'
+      ],
+      category: 'affirmations',
+      tags: ['new', 'digital'],
+      placeholderColor: '#C4A98A',
+      digital: true,
+      downloadFile: '',
+      sizes: {
+        'Digital Download': { price: 17.77, stripePriceId: '' }
+      },
+      sortOrder: 3
+    },
+    {
+      id: 'print-004',
+      title: 'Birth Affirmation Cards — Faith-Based',
+      description: 'A set of 20 beautifully hand-drawn 8×10 birth affirmation cards rooted in faith. Earthy tones and soothing imagery paired with scripture-inspired words to carry you through labor with peace and trust in God\'s plan.',
+      image: 'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20R.jpg',
+      images: [
+        'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20R.jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/2%20Visual%20Design%20-%20done%20(1).jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/3%20Diverse%20Affirmations%20-%20done%20(1).jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/5%20Group%20of%20Cards%20-%20done%20(1).jpg',
+        'images/Amazon%20Storefront%20Birth%20Cards/6%20Quality%20-%20done%20(1).jpg'
+      ],
+      category: 'affirmations',
+      tags: ['new', 'digital'],
+      placeholderColor: '#C9A088',
+      digital: true,
+      downloadFile: 'images/Amazon%20Storefront%20Birth%20Cards/Christ-Birth-Cards-PDF.pdf',
+      sizes: {
+        'Digital Download': { price: 17.77, stripePriceId: '' }
+      },
+      sortOrder: 4
     }
   ]
 };
@@ -148,14 +192,17 @@ function renderGrid() {
       ? `<img src="${print.image}" alt="${print.title}" loading="lazy">`
       : `<div class="print-card-placeholder" style="background:${print.placeholderColor}">${print.title}</div>`;
 
+    const priceLabel = print.digital ? `$${minPrice}` : `From $${minPrice}`;
+    const digitalBadge = print.digital ? '<span class="print-tag digital-tag">Digital</span>' : '';
+
     card.innerHTML = `
       <div class="print-card-image">
         ${imageHTML}
-        ${tagHTML}
+        ${tagHTML || digitalBadge}
       </div>
       <div class="print-card-info">
         <h3 class="print-card-title">${print.title}</h3>
-        <p class="print-card-price">From $${minPrice}</p>
+        <p class="print-card-price">${priceLabel}</p>
       </div>
     `;
 
@@ -276,6 +323,23 @@ function openProduct(print) {
   if (!print.image) {
     productMainImg.style.display = 'none';
     productMainImg.parentElement.style.background = print.placeholderColor;
+  }
+
+  // Update specs for digital vs physical
+  if (print.digital) {
+    shippingNote.textContent = 'Instant digital download — PDF delivered to your email';
+    document.querySelector('.product-specs').innerHTML = `
+      <li>Digital download — 20 printable 8×10 cards</li>
+      <li>High-resolution PDF, ready to print at home or a print shop</li>
+      <li>Delivered instantly to your email after purchase</li>
+    `;
+  } else {
+    shippingNote.textContent = SHOP_CONFIG.shippingNote;
+    document.querySelector('.product-specs').innerHTML = `
+      <li>Museum-quality print on archival paper</li>
+      <li>Printed and shipped by the artist</li>
+      <li id="shippingNote">${SHOP_CONFIG.shippingNote}</li>
+    `;
   }
 
   // Open
