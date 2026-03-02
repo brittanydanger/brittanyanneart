@@ -1088,7 +1088,17 @@ h1, h2, h3, h4 {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: #DEEAF6;
+  box-shadow: 0 0 0 3px rgba(222, 234, 246, 0.5);
+}
+
+/* Override browser autofill yellow background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--off-white) inset;
+  -webkit-text-fill-color: var(--color-body);
+  border-color: var(--color-border);
 }
 
 .form-group textarea {
@@ -1300,7 +1310,9 @@ h1, h2, h3, h4 {
   text-align: center;
 }
 
-.step-centered p {
+.step-content p {
+  font-size: 0.95rem;
+  line-height: 1.6;
   margin-bottom: 1.25rem;
 }
 
@@ -1325,7 +1337,7 @@ h1, h2, h3, h4 {
 }
 
 .step-hint {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   opacity: 0.6;
   margin-bottom: var(--space-md);
 }
@@ -1557,6 +1569,45 @@ h1, h2, h3, h4 {
 .step-textarea-group textarea:focus {
   outline: none;
   border-color: var(--color-accent);
+}
+
+/* Deadline Note */
+.timeline-deadline-group {
+  max-width: 400px;
+  margin: var(--space-md) auto;
+  text-align: center;
+}
+
+.timeline-deadline-group label {
+  font-size: 0.85rem;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.timeline-deadline-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-text);
+  text-align: center;
+  transition: border-color var(--duration) var(--ease);
+}
+
+.timeline-deadline-group input:focus {
+  outline: none;
+  border-color: #DEEAF6;
+  box-shadow: 0 0 0 3px rgba(222, 234, 246, 0.5);
+}
+
+.timeline-deadline-group input::placeholder {
+  font-style: italic;
+  opacity: 0.4;
 }
 
 /* Donation Input */
@@ -1939,9 +1990,16 @@ h1, h2, h3, h4 {
   background: #DEEAF6;
 }
 
+.summary-submark {
+  display: block;
+  width: 120px;
+  height: auto;
+  margin: 0 auto 1rem;
+}
+
 /* Summary Card */
 .summary-card {
-  background: #fff;
+  background: var(--off-white);
   border-radius: 8px;
   padding: var(--space-md);
   margin: var(--space-md) auto;
@@ -1977,7 +2035,16 @@ h1, h2, h3, h4 {
   font-family: var(--font-heading);
   font-size: 1.5rem;
   color: var(--color-accent);
-  margin: var(--space-md) 0;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 2px solid var(--color-border);
+  text-align: right;
+}
+
+.summary-download-btn {
+  display: block;
+  margin: var(--space-sm) auto 0;
+  font-size: 0.8rem;
 }
 
 /* Payment Options */
@@ -2001,7 +2068,7 @@ h1, h2, h3, h4 {
 }
 
 .payment-card {
-  background: #fff;
+  background: var(--off-white);
   border: 2px solid var(--color-border);
   border-radius: 8px;
   padding: var(--space-md) var(--space-sm);
@@ -2009,7 +2076,9 @@ h1, h2, h3, h4 {
   cursor: pointer;
   transition: all var(--duration) var(--ease);
   display: block;
+  width: 100%;
   color: var(--color-text);
+  font-family: var(--font-body);
 }
 
 .payment-card:hover {

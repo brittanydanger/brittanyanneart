@@ -44,7 +44,7 @@ const CONFIG = {
   social: {
     instagram: '',
     facebook: '',
-    tiktok: ''
+    tiktok: 'https://www.tiktok.com/@brittanyanneart'
   }
 };
 
@@ -67,6 +67,7 @@ const state = {
   additionalNotes: '',
   paymentOption: null,
   deliveryWindow: null,
+  deadlineNote: '',
   rushRequested: false,
   giftMessage: '',
   shippingMethod: null,
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'contactEmail': state.email,
       'contactPhone': state.phone,
       'additionalNotes': state.additionalNotes,
+      'deadlineNote': state.deadlineNote,
       'giftNote': state.giftMessage,
       'shippingName': state.shippingName,
       'shippingStreet': state.shippingStreet,
@@ -652,8 +654,9 @@ function goToStep(stepNum) {
 
   // If we're on the summary step, capture add-ons + shipping then populate
   if (stepNum === 14) {
-    // Capture rush checkbox
+    // Capture rush checkbox and deadline note
     state.rushRequested = document.getElementById('rushCheckbox').checked;
+    state.deadlineNote = document.getElementById('deadlineNote').value.trim();
 
     // Capture gift message if on gift path
     if (state.subject === 'loved-one') {
@@ -858,9 +861,9 @@ function buildTimelineGrid() {
   // Update subtitle with size-specific lead time
   const subtitle = document.getElementById('timelineSubtitle');
   const rushWeeks = RUSH_WEEKS_BY_SIZE[state.size] || 6;
-  const leadTimes = { '8x10': '4–6', '11x14': '6–8', '16x20': '8–12', '18x24': '8–12', '24x30': '10–14', '24x36': '10–14', '36x36': '12–16', '48x48': '14–20' };
-  const timeRange = leadTimes[state.size] || '4–8';
-  subtitle.textContent = `A ${state.size}" portrait typically takes ${timeRange} weeks. Select your preferred delivery window below.`;
+  const leadTimes = { '8x10': '2–3 weeks', '11x14': '4–6 weeks', '16x20': '6–8 weeks', '18x24': '6–8 weeks', '24x30': '2–3 months', '24x36': '2–3 months', '36x36': '2.5–3 months', '48x48': '3–4 months' };
+  const timeRange = leadTimes[state.size] || '2–6 weeks';
+  subtitle.textContent = `A ${state.size}" portrait typically takes ${timeRange}. Select your preferred delivery window below.`;
 
   // Render the grid synchronously first, then apply blocked windows from server
   renderTimelineWindows(grid, continueBtn, rushNotice, []);
@@ -879,14 +882,14 @@ function buildTimelineGrid() {
 
 // Minimum lead times (weeks) per size — anything under this is a rush
 const RUSH_WEEKS_BY_SIZE = {
-  '8x10':  4,
-  '11x14': 6,
-  '16x20': 8,
-  '18x24': 8,
-  '24x30': 10,
-  '24x36': 10,
-  '36x36': 12,
-  '48x48': 14
+  '8x10':  2,
+  '11x14': 4,
+  '16x20': 6,
+  '18x24': 6,
+  '24x30': 8,
+  '24x36': 8,
+  '36x36': 10,
+  '48x48': 12
 };
 
 function renderTimelineWindows(grid, continueBtn, rushNotice, blockedWindows) {
@@ -1100,16 +1103,14 @@ function populateSummary() {
   const paymentEl = document.getElementById('paymentOptions');
 
   // Build summary rows
-  const labels = {
+  const portraitLabels = {
     subject: 'Portrait for',
     subjectCount: 'Subjects',
     energy: 'Energy / Intention',
     approach: 'Approach',
     style: 'Style',
     colorPalette: 'Color Palette',
-    size: 'Size',
-    wantsReading: 'Written Message',
-    wantsPrints: 'Print Add-Ons'
+    size: 'Size'
   };
 
   const formatValue = (key, val) => {
@@ -1120,18 +1121,16 @@ function populateSummary() {
       approach: { 'vision': 'I Have a Vision', 'channeled': 'Fully Channeled' },
       style: { 'colored-pencil': 'Colored Pencil', 'painted': 'Painted', 'mixed-media': 'Mixed Media', 'brittanys-choice': "Brittany's Choice" },
       colorPalette: { 'warm': 'Warm Tones', 'cool': 'Cool Tones', 'neutral': 'Neutral & Soft', 'bold': 'Bold & Vibrant', 'channel': 'Let Brittany Channel', 'custom': 'Custom' },
-      size: { '8x10': '8 × 10', '11x14': '11 × 14', '16x20': '16 × 20', '18x24': '18 × 24', '24x30': '24 × 30', '24x36': '24 × 36', '36x36': '36 × 36', '48x48': '48 × 48', 'custom': 'Custom Size' },
-      wantsReading: { 'yes': 'Yes (by donation)', 'no': 'No' },
-      wantsPrints: { 'yes': 'Yes', 'no': 'No' }
+      size: { '8x10': '8 × 10', '11x14': '11 × 14', '16x20': '16 × 20', '18x24': '18 × 24', '24x30': '24 × 30', '24x36': '24 × 36', '36x36': '36 × 36', '48x48': '48 × 48', 'custom': 'Custom Size' }
     };
     return maps[key] ? (maps[key][val] || val) : val;
   };
 
   let html = '';
-  for (const [key, label] of Object.entries(labels)) {
-    // Skip style and color for channeled path
-    if (state.approach === 'channeled' && (key === 'style' || key === 'colorPalette')) continue;
 
+  // Portrait details
+  for (const [key, label] of Object.entries(portraitLabels)) {
+    if (state.approach === 'channeled' && (key === 'style' || key === 'colorPalette')) continue;
     const value = formatValue(key, state[key]);
     html += `<div class="summary-row">
       <span class="summary-label">${label}</span>
@@ -1139,7 +1138,7 @@ function populateSummary() {
     </div>`;
   }
 
-  // Delivery window
+  // Delivery window & deadline
   if (state.deliveryWindow) {
     let windowText = formatDeliveryWindow(state.deliveryWindow);
     if (state.rushRequested) windowText += ' (Rush Requested)';
@@ -1149,15 +1148,14 @@ function populateSummary() {
     </div>`;
   }
 
-  // Gift message
-  if (state.subject === 'loved-one' && state.giftMessage) {
+  if (state.deadlineNote) {
     html += `<div class="summary-row">
-      <span class="summary-label">Personal Note</span>
-      <span class="summary-value">${state.giftMessage}</span>
+      <span class="summary-label">Deadline</span>
+      <span class="summary-value">${state.deadlineNote}</span>
     </div>`;
   }
 
-  // Add photos count
+  // Reference photos
   if (state.photos.length > 0) {
     html += `<div class="summary-row">
       <span class="summary-label">Reference Photos</span>
@@ -1165,8 +1163,36 @@ function populateSummary() {
     </div>`;
   }
 
-  // Add print add-on details
+  // Written message / gift note
+  if (state.subject === 'loved-one' && state.giftMessage) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Personal Note</span>
+      <span class="summary-value">${state.giftMessage}</span>
+    </div>`;
+  }
+
+  const wantsReadingLabel = state.wantsReading === 'yes' ? 'Yes (by donation)' : state.wantsReading === 'no' ? 'No' : '—';
+  html += `<div class="summary-row">
+    <span class="summary-label">Written Message</span>
+    <span class="summary-value">${wantsReadingLabel}</span>
+  </div>`;
+
+  if (state.wantsReading === 'yes' && state.donationAmount) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Written Message Donation</span>
+      <span class="summary-value">$${state.donationAmount}</span>
+    </div>`;
+  }
+
+  // Print add-ons grouped together
   const addOnEntries = Object.entries(printAddOns).filter(([, qty]) => qty > 0);
+  const hasAnyPrints = Object.values(printAddOns).some(qty => qty > 0);
+
+  html += `<div class="summary-row">
+    <span class="summary-label">Print Add-Ons</span>
+    <span class="summary-value">${hasAnyPrints ? 'Yes' : 'No'}</span>
+  </div>`;
+
   if (addOnEntries.length > 0) {
     addOnEntries.forEach(([size, qty]) => {
       const price = qty * printAddOnPrices[size];
@@ -1177,7 +1203,6 @@ function populateSummary() {
     });
   }
 
-  // Add custom print request
   const customReq = document.getElementById('customPrintRequest');
   if (customReq && customReq.value.trim()) {
     html += `<div class="summary-row">
@@ -1186,20 +1211,10 @@ function populateSummary() {
     </div>`;
   }
 
-  // Image capture fee line (when prints are selected)
-  const hasAnyPrints = Object.values(printAddOns).some(qty => qty > 0);
   if (hasAnyPrints) {
     html += `<div class="summary-row">
       <span class="summary-label">Image Capture Fee</span>
       <span class="summary-value">$${IMAGE_CAPTURE_FEE}</span>
-    </div>`;
-  }
-
-  // Add donation amount
-  if (state.wantsReading === 'yes' && state.donationAmount) {
-    html += `<div class="summary-row">
-      <span class="summary-label">Written Message Donation</span>
-      <span class="summary-value">$${state.donationAmount}</span>
     </div>`;
   }
 
@@ -1238,21 +1253,21 @@ function populateSummary() {
 
   if (total > 0) {
     paymentHtml += `
-      <a href="${CONFIG.stripeLinks.full || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="full">
+      <button class="payment-card" data-payment="full">
         <div class="payment-card-title">Pay in Full</div>
         <div class="payment-card-amount">$${total}</div>
         <div class="payment-card-note">Best price — one-time payment</div>
-      </a>
-      <a href="${CONFIG.stripeLinks.deposit || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="deposit">
+      </button>
+      <button class="payment-card" data-payment="deposit">
         <div class="payment-card-title">${CONFIG.depositPercent}% Deposit</div>
         <div class="payment-card-amount">$${depositNow} now</div>
         <div class="payment-card-note">$${depositTotal} total (+${CONFIG.depositSurchargePercent}%)</div>
-      </a>
-      <a href="${CONFIG.stripeLinks.plan || '#'}" class="payment-card" target="_blank" rel="noopener" data-payment="plan">
+      </button>
+      <button class="payment-card" data-payment="plan">
         <div class="payment-card-title">Payment Plan</div>
         <div class="payment-card-amount">${CONFIG.paymentPlanInstallments} × $${planAmount}</div>
         <div class="payment-card-note">$${planTotal} total (+${CONFIG.paymentPlanSurchargePercent}%)</div>
-      </a>`;
+      </button>`;
   } else {
     paymentHtml = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 1rem;">
@@ -1269,6 +1284,9 @@ function populateSummary() {
     bookBtn.addEventListener('click', showConfirmation);
   }
 
+  // Download receipt button
+  document.getElementById('downloadReceiptBtn').addEventListener('click', downloadReceipt);
+
   // Payment card click handlers — save order then create Stripe checkout
   paymentEl.querySelectorAll('.payment-card').forEach(card => {
     card.addEventListener('click', async (e) => {
@@ -1277,6 +1295,42 @@ function populateSummary() {
       await handleCommissionPayment(paymentType);
     });
   });
+}
+
+function downloadReceipt() {
+  const rows = document.querySelectorAll('#summaryCard .summary-row');
+  const totalText = document.getElementById('summaryTotal').textContent;
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  let text = '════════════════════════════════════════\n';
+  text += '    BrittanyAnne Intuitive Fine Art\n';
+  text += '      Portrait Commission Receipt\n';
+  text += '════════════════════════════════════════\n\n';
+  text += `Date: ${date}\n`;
+  text += `Client: ${state.name}\n`;
+  text += `Email: ${state.email}\n`;
+  if (state.phone) text += `Phone: ${state.phone}\n`;
+  text += '\n────────────────────────────────────────\n\n';
+
+  rows.forEach(row => {
+    const label = row.querySelector('.summary-label')?.textContent || '';
+    const value = row.querySelector('.summary-value')?.textContent?.replace(/<br\s*\/?>/g, ', ') || '';
+    text += `${label}: ${value}\n`;
+  });
+
+  text += '\n────────────────────────────────────────\n';
+  text += `${totalText}\n`;
+  text += '════════════════════════════════════════\n\n';
+  text += 'Thank you for commissioning a portrait!\n';
+  text += 'Brittany will be in touch soon.\n';
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `BrittanyAnne-Receipt-${date.replace(/\s/g, '-')}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 async function handleCommissionPayment(paymentType) {
@@ -1308,6 +1362,7 @@ async function handleCommissionPayment(paymentType) {
     size: state.size,
     additionalNotes: state.additionalNotes,
     deliveryWindow: state.deliveryWindow,
+    deadlineNote: state.deadlineNote,
     rushRequested: state.rushRequested,
     giftMessage: state.giftMessage,
     shippingMethod: state.shippingMethod,
@@ -1459,6 +1514,7 @@ function resetState() {
     additionalNotes: '',
     paymentOption: null,
     deliveryWindow: null,
+    deadlineNote: '',
     rushRequested: false,
     giftMessage: '',
     shippingMethod: null,
