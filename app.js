@@ -69,6 +69,9 @@ const state = {
   deliveryWindow: null,
   deadlineNote: '',
   rushRequested: false,
+  storyName: '',
+  storyRelationship: '',
+  storyText: '',
   giftMessage: '',
   shippingMethod: null,
   shippingName: '',
@@ -79,8 +82,8 @@ const state = {
 };
 
 // Step sequences based on path
-const STEPS_VISION = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-const STEPS_CHANNELED = [0, 1, 2, 3, 7, 8, 9, 10, 11, 12, 13, 14];
+const STEPS_VISION = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 11, 12, 13, 10, 15];
+const STEPS_CHANNELED = [0, 1, 2, 3, 7, 8, 9, 14, 11, 12, 13, 10, 15];
 
 // Print add-on quantities
 const printAddOns = { '5x7': 0, '8x10': 0, '11x14': 0 };
@@ -160,6 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
       'contactPhone': state.phone,
       'additionalNotes': state.additionalNotes,
       'deadlineNote': state.deadlineNote,
+      'storyName': state.storyName,
+      'storyRelationship': state.storyRelationship,
+      'storyText': state.storyText,
       'giftNote': state.giftMessage,
       'shippingName': state.shippingName,
       'shippingStreet': state.shippingStreet,
@@ -472,7 +478,13 @@ function initCommissionFlow() {
   document.querySelectorAll('[data-field="wantsPrints"] .option-card').forEach(card => {
     card.addEventListener('click', () => {
       const printGroup = document.getElementById('printAddOnGroup');
-      printGroup.style.display = card.dataset.value === 'yes' ? 'block' : 'none';
+      if (card.dataset.value === 'yes') {
+        printGroup.style.display = 'block';
+      } else {
+        printGroup.style.display = 'none';
+        // Auto-advance when they choose "No Thanks"
+        setTimeout(() => goToStep(9), 300);
+      }
     });
   });
 
@@ -634,8 +646,31 @@ function goToStep(stepNum) {
     buildTimelineGrid();
   }
 
-  // If we're on the shipping step, capture shipping fields
+  // Pre-fill contact info from localStorage
+  if (stepNum === 12) {
+    try {
+      const saved = {
+        clientName: localStorage.getItem('ba_client_name'),
+        clientEmail: localStorage.getItem('ba_client_email'),
+        clientPhone: localStorage.getItem('ba_client_phone')
+      };
+      for (const [id, val] of Object.entries(saved)) {
+        const input = document.getElementById(id);
+        if (input && val && !input.value) input.value = val;
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  // Capture story fields when leaving step 13
   if (stepNum === 13) {
+    // Restore story fields if revisiting
+    if (state.storyName) document.getElementById('storyName').value = state.storyName;
+    if (state.storyRelationship) document.getElementById('storyRelationship').value = state.storyRelationship;
+    if (state.storyText) document.getElementById('storyText').value = state.storyText;
+  }
+
+  // If we're on the shipping step, capture shipping fields
+  if (stepNum === 14) {
     // Restore shipping UI state if revisiting
     if (state.shippingMethod) {
       const addressGroup = document.getElementById('shippingAddressGroup');
@@ -652,11 +687,16 @@ function goToStep(stepNum) {
     }
   }
 
-  // If we're on the summary step, capture add-ons + shipping then populate
-  if (stepNum === 14) {
+  // If we're on the summary step, capture add-ons + shipping + story then populate
+  if (stepNum === 15) {
     // Capture rush checkbox and deadline note
     state.rushRequested = document.getElementById('rushCheckbox').checked;
     state.deadlineNote = document.getElementById('deadlineNote').value.trim();
+
+    // Capture story fields
+    state.storyName = document.getElementById('storyName').value.trim();
+    state.storyRelationship = document.getElementById('storyRelationship').value.trim();
+    state.storyText = document.getElementById('storyText').value.trim();
 
     // Capture gift message if on gift path
     if (state.subject === 'loved-one') {
@@ -703,8 +743,8 @@ function updateProgress() {
 
 function updateDynamicStepNumbers() {
   if (state.approach === 'channeled') {
-    // Channeled skips steps 4,5,6 — renumber from 7 onward
-    const mapping = { 7: '04', 8: '05', 9: '06', 10: '07', 11: '08', 12: '09', 13: '10', 14: '11' };
+    // Channeled skips steps 4,5,6 — renumber by display order
+    const mapping = { 7: '04', 8: '05', 9: '06', 14: '07', 11: '08', 12: '09', 13: '10', 10: '11', 15: '12' };
     document.querySelectorAll('.dynamic-step-num').forEach(el => {
       const step = el.closest('.flow-step');
       if (step && mapping[step.dataset.step]) {
@@ -712,8 +752,8 @@ function updateDynamicStepNumbers() {
       }
     });
   } else {
-    // Reset to normal
-    const mapping = { 7: '07', 8: '08', 9: '09', 10: '10', 11: '11', 12: '12', 13: '13', 14: '14' };
+    // Reset to normal — display order
+    const mapping = { 7: '07', 8: '08', 9: '09', 14: '10', 11: '11', 12: '12', 13: '13', 10: '14', 15: '15' };
     document.querySelectorAll('.dynamic-step-num').forEach(el => {
       const step = el.closest('.flow-step');
       if (step && mapping[step.dataset.step]) {
@@ -836,6 +876,10 @@ function calculateTotal() {
   const basePrice = sizeData[subjects] || 0;
   const channeledExtra = state.approach === 'channeled' ? CONFIG.channeledPremium : 0;
 
+  // Medium premium (percentage of base price)
+  const mediumPremiums = { 'colored-pencil': 0, 'digital': 0, 'watercolor': 0.15, 'acrylic': 0.20, 'mixed-media': 0.25, 'brittanys-choice': 0.25 };
+  const mediumPremium = Math.round(basePrice * (mediumPremiums[state.style] || 0));
+
   // Print add-on total
   let printTotal = 0;
   for (const [size, qty] of Object.entries(printAddOns)) {
@@ -846,10 +890,13 @@ function calculateTotal() {
   const hasAnyPrints = Object.values(printAddOns).some(qty => qty > 0);
   const imageCaptureFee = hasAnyPrints ? IMAGE_CAPTURE_FEE : 0;
 
+  // Rush fee
+  const rushFee = state.rushRequested ? 150 : 0;
+
   // Donation amount
   const donation = state.donationAmount ? parseFloat(state.donationAmount) || 0 : 0;
 
-  return basePrice + channeledExtra + printTotal + imageCaptureFee + donation;
+  return basePrice + channeledExtra + mediumPremium + printTotal + imageCaptureFee + rushFee + donation;
 }
 
 // ---- TIMELINE / DELIVERY WINDOW ----
@@ -1083,6 +1130,13 @@ function handleReview() {
   state.phone = phone;
   state.additionalNotes = notes;
 
+  // Remember contact info for next visit
+  try {
+    localStorage.setItem('ba_client_name', name);
+    localStorage.setItem('ba_client_email', email);
+    if (phone) localStorage.setItem('ba_client_phone', phone);
+  } catch (e) { /* ignore */ }
+
   // Also capture textarea values from earlier steps
   state.energyNote = document.getElementById('energyNote').value.trim();
   if (state.colorPalette === 'custom') {
@@ -1093,7 +1147,7 @@ function handleReview() {
   }
   state.printAddOns = { ...printAddOns };
 
-  // Go to shipping
+  // Go to story step
   goToStep(13);
 }
 
@@ -1119,7 +1173,7 @@ function populateSummary() {
       subject: { 'myself': 'Myself', 'loved-one': 'A Loved One (Gift)', 'family': 'A Family / Group', 'pet': 'A Pet', 'passed': 'Someone Who Has Passed', 'other': 'Other' },
       energy: { 'healing': 'Healing', 'celebration': 'Celebration', 'remembrance': 'Remembrance', 'love': 'Love', 'empowerment': 'Empowerment', 'transformation': 'Transformation', 'channel': 'Let Brittany Channel' },
       approach: { 'vision': 'I Have a Vision', 'channeled': 'Fully Channeled' },
-      style: { 'colored-pencil': 'Colored Pencil', 'painted': 'Painted', 'mixed-media': 'Mixed Media', 'brittanys-choice': "Brittany's Choice" },
+      style: { 'colored-pencil': 'Colored Pencil', 'watercolor': 'Watercolor', 'acrylic': 'Acrylic', 'digital': 'Digital', 'mixed-media': 'Mixed Media', 'brittanys-choice': "Brittany's Choice" },
       colorPalette: { 'warm': 'Warm Tones', 'cool': 'Cool Tones', 'neutral': 'Neutral & Soft', 'bold': 'Bold & Vibrant', 'channel': 'Let Brittany Channel', 'custom': 'Custom' },
       size: { '8x10': '8 × 10', '11x14': '11 × 14', '16x20': '16 × 20', '18x24': '18 × 24', '24x30': '24 × 30', '24x36': '24 × 36', '36x36': '36 × 36', '48x48': '48 × 48', 'custom': 'Custom Size' }
     };
@@ -1138,6 +1192,40 @@ function populateSummary() {
     </div>`;
   }
 
+  // Medium premium line
+  const mediumPremiums = { 'colored-pencil': 0, 'digital': 0, 'watercolor': 0.15, 'acrylic': 0.20, 'mixed-media': 0.25, 'brittanys-choice': 0.25 };
+  const mediumRate = mediumPremiums[state.style] || 0;
+  if (mediumRate > 0 && state.size && state.size !== 'custom') {
+    const subjects = getSubjectKey();
+    const sizeData = CONFIG.pricing[state.size];
+    const base = sizeData ? (sizeData[subjects] || 0) : 0;
+    const premium = Math.round(base * mediumRate);
+    html += `<div class="summary-row">
+      <span class="summary-label">Medium Premium (+${Math.round(mediumRate * 100)}%)</span>
+      <span class="summary-value">+$${premium}</span>
+    </div>`;
+  }
+
+  // Story details
+  if (state.storyName) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Portrait Of</span>
+      <span class="summary-value">${state.storyName}</span>
+    </div>`;
+  }
+  if (state.storyRelationship) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Relationship</span>
+      <span class="summary-value">${state.storyRelationship}</span>
+    </div>`;
+  }
+  if (state.storyText) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Their Story</span>
+      <span class="summary-value">${state.storyText}</span>
+    </div>`;
+  }
+
   // Delivery window & deadline
   if (state.deliveryWindow) {
     let windowText = formatDeliveryWindow(state.deliveryWindow);
@@ -1145,6 +1233,13 @@ function populateSummary() {
     html += `<div class="summary-row">
       <span class="summary-label">Delivery Window</span>
       <span class="summary-value">${windowText}</span>
+    </div>`;
+  }
+
+  if (state.rushRequested) {
+    html += `<div class="summary-row">
+      <span class="summary-label">Rush Fee</span>
+      <span class="summary-value">$150</span>
     </div>`;
   }
 
@@ -1298,39 +1393,200 @@ function populateSummary() {
 }
 
 function downloadReceipt() {
-  const rows = document.querySelectorAll('#summaryCard .summary-row');
-  const totalText = document.getElementById('summaryTotal').textContent;
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const rows = document.querySelectorAll('#summaryCard .summary-row');
+  const totalText = document.getElementById('summaryTotal').textContent || '';
 
-  let text = '════════════════════════════════════════\n';
-  text += '    BrittanyAnne Intuitive Fine Art\n';
-  text += '      Portrait Commission Receipt\n';
-  text += '════════════════════════════════════════\n\n';
-  text += `Date: ${date}\n`;
-  text += `Client: ${state.name}\n`;
-  text += `Email: ${state.email}\n`;
-  if (state.phone) text += `Phone: ${state.phone}\n`;
-  text += '\n────────────────────────────────────────\n\n';
+  // Get the logo as a data URL so it works in the new window
+  let logoDataUrl = '';
+  try {
+    const logoImg = document.querySelector('.summary-submark');
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+      const canvas = document.createElement('canvas');
+      canvas.width = logoImg.naturalWidth;
+      canvas.height = logoImg.naturalHeight;
+      canvas.getContext('2d').drawImage(logoImg, 0, 0);
+      logoDataUrl = canvas.toDataURL('image/png');
+    }
+  } catch (e) { /* skip */ }
 
+  // Build summary rows HTML
+  let rowsHtml = '';
   rows.forEach(row => {
     const label = row.querySelector('.summary-label')?.textContent || '';
-    const value = row.querySelector('.summary-value')?.textContent?.replace(/<br\s*\/?>/g, ', ') || '';
-    text += `${label}: ${value}\n`;
+    const value = row.querySelector('.summary-value')?.innerHTML || '';
+    rowsHtml += `
+      <div class="row">
+        <span class="label">${label}</span>
+        <span class="value">${value}</span>
+      </div>`;
   });
 
-  text += '\n────────────────────────────────────────\n';
-  text += `${totalText}\n`;
-  text += '════════════════════════════════════════\n\n';
-  text += 'Thank you for commissioning a portrait!\n';
-  text += 'Brittany will be in touch soon.\n';
+  // Build the full branded HTML page
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BrittanyAnne — Portrait Commission Summary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: letter;
+      margin: 0;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #DEEAF6;
+      font-family: 'Josefin Sans', sans-serif;
+      color: #262D3C;
+      display: flex;
+      justify-content: center;
+      padding: 40px 0;
+      min-height: 100vh;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page {
+      background: #FFFAF6;
+      width: 540px;
+      border-radius: 12px;
+      padding: 48px 44px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+    .logo {
+      display: block;
+      width: 100px;
+      height: auto;
+      margin: 0 auto 20px;
+    }
+    .script {
+      font-family: 'Great Vibes', cursive;
+      color: #AA6D5B;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      text-align: center;
+      color: #262D3C;
+      margin-bottom: 24px;
+      letter-spacing: 0.02em;
+    }
+    .client-info {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 0.03em;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #E0E0E0;
+      margin-bottom: 8px;
+    }
+    .client-info span { margin: 0 6px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid #EEEAE6;
+      font-size: 13px;
+      gap: 16px;
+    }
+    .row:last-child { border-bottom: none; }
+    .label {
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: #999;
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+    .value {
+      text-align: right;
+      font-weight: 400;
+      color: #262D3C;
+      line-height: 1.4;
+    }
+    .total-divider {
+      border: none;
+      border-top: 2px solid #AA6D5B;
+      margin: 20px 0 16px;
+    }
+    .total {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: #AA6D5B;
+      text-align: right;
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+    }
+    .closing {
+      text-align: center;
+      border-top: 1px solid #E0E0E0;
+      padding-top: 24px;
+      margin-top: 8px;
+    }
+    .closing p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: #999;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 10px;
+      color: #C0B8B0;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    @media print {
+      body { padding: 0; background: #DEEAF6; }
+      .page { box-shadow: none; border-radius: 0; width: 100%; max-width: 100%; padding: 48px 56px; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    ${logoDataUrl ? `<img class="logo" src="${logoDataUrl}" alt="BrittanyAnne">` : ''}
+    <div class="script">your portrait journey</div>
+    <h1>Here's What We'll Create Together</h1>
+    <div class="client-info">
+      <span>${state.name}</span> &bull;
+      <span>${state.email}</span>
+      ${state.phone ? '&bull; <span>' + state.phone + '</span>' : ''}
+      <br>${date}
+    </div>
+    ${rowsHtml}
+    <hr class="total-divider">
+    <div class="total">${totalText}</div>
+    <div class="closing">
+      <p>Thank you for commissioning a portrait.<br>Brittany will be in touch soon.</p>
+    </div>
+    <div class="footer">BrittanyAnne Intuitive Fine Art</div>
+    <div class="no-print" style="text-align:center; margin-top:32px;">
+      <button onclick="window.print()" style="
+        font-family: 'Josefin Sans', sans-serif;
+        background: #AA6D5B; color: #fff; border: none;
+        padding: 12px 32px; border-radius: 4px; font-size: 13px;
+        letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+      ">Save as PDF</button>
+    </div>
+  </div>
+</body>
+</html>`;
 
-  const blob = new Blob([text], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `BrittanyAnne-Receipt-${date.replace(/\s/g, '-')}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
 }
 
 async function handleCommissionPayment(paymentType) {
@@ -1364,6 +1620,9 @@ async function handleCommissionPayment(paymentType) {
     deliveryWindow: state.deliveryWindow,
     deadlineNote: state.deadlineNote,
     rushRequested: state.rushRequested,
+    storyName: state.storyName,
+    storyRelationship: state.storyRelationship,
+    storyText: state.storyText,
     giftMessage: state.giftMessage,
     shippingMethod: state.shippingMethod,
     shippingName: state.shippingName,
@@ -1516,6 +1775,9 @@ function resetState() {
     deliveryWindow: null,
     deadlineNote: '',
     rushRequested: false,
+    storyName: '',
+    storyRelationship: '',
+    storyText: '',
     giftMessage: '',
     shippingMethod: null,
     shippingName: '',

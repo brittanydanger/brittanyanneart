@@ -6,6 +6,11 @@
   <title>BrittanyAnne — Intuitive Fine Art</title>
   <meta name="description" content="Intuitive and channeled portrait art by BrittanyAnne. Portraits that capture what the eye cannot see.">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="Branding/favicon/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="Branding/favicon/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="Branding/favicon/apple-touch-icon.png">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,25 +161,11 @@
         </div>
         <div class="paths-grid">
           <div class="path-card fade-in" id="pathCommissionBtn">
-            <div class="path-icon">
-              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <path d="M24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20S35 4 24 4z"/>
-                <path d="M18 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
-                <path d="M14 34c0-5.5 4.5-10 10-10s10 4.5 10 10"/>
-              </svg>
-            </div>
             <h3>Commission a Portrait</h3>
             <p>A one-of-a-kind, intuitive portrait created just for you — guided by intention, spirit, and love.</p>
             <span class="path-arrow" aria-hidden="true">&rarr;</span>
           </div>
           <a href="#shop" class="path-card fade-in">
-            <div class="path-icon">
-              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                <rect x="6" y="14" width="36" height="28" rx="2"/>
-                <path d="M16 14V10a8 8 0 0116 0v4"/>
-                <circle cx="18" cy="26" r="2"/><circle cx="30" cy="26" r="2"/>
-              </svg>
-            </div>
             <h3>Shop Prints</h3>
             <p>Beautiful reproductions of Brittany's original works — perfect for bringing sacred art into your space.</p>
             <span class="path-arrow" aria-hidden="true">&rarr;</span>
@@ -460,22 +451,40 @@
           <span class="step-number">05</span>
           <h2>What style speaks to you?</h2>
           <p>Each piece is entirely hand-drawn and hand-painted — no digital overlays, no AI. Choose the medium that resonates with your story.</p>
-          <div class="option-grid option-grid-2" data-field="style">
+          <div class="option-grid option-grid-3" data-field="style">
             <button class="option-card" data-value="colored-pencil">
               <span class="option-label">Colored Pencil</span>
               <span class="option-sub">Delicate, detailed, luminous</span>
+              <span class="option-tooltip">Layered by hand for soft, lifelike depth and fine detail.</span>
             </button>
-            <button class="option-card" data-value="painted">
-              <span class="option-label">Painted</span>
-              <span class="option-sub">Expressive, rich, textured</span>
+            <button class="option-card" data-value="watercolor">
+              <span class="option-label">Watercolor</span>
+              <span class="option-sub">Soft, ethereal, flowing</span>
+              <span class="option-premium">+15%</span>
+              <span class="option-tooltip">Translucent washes that create a dreamy, luminous quality.</span>
+            </button>
+            <button class="option-card" data-value="acrylic">
+              <span class="option-label">Acrylic</span>
+              <span class="option-sub">Bold, vibrant, textured</span>
+              <span class="option-premium">+20%</span>
+              <span class="option-tooltip">Rich, opaque layers with expressive brushwork and vivid color.</span>
             </button>
             <button class="option-card" data-value="mixed-media">
               <span class="option-label">Mixed Media</span>
               <span class="option-sub">Layered, dimensional, unique</span>
+              <span class="option-premium">+25%</span>
+              <span class="option-tooltip">A combination of mediums — colored pencil, acrylic, gold leaf, and other materials — for a truly one-of-a-kind piece.</span>
+            </button>
+            <button class="option-card" data-value="digital">
+              <span class="option-label">Digital</span>
+              <span class="option-sub">Clean, modern, versatile</span>
+              <span class="option-tooltip">A polished digital portrait — perfect for printing at any size or sharing online.</span>
             </button>
             <button class="option-card" data-value="brittanys-choice">
               <span class="option-label">Brittany's Choice</span>
               <span class="option-sub">Let the medium find you</span>
+              <span class="option-premium">+25%</span>
+              <span class="option-tooltip">Brittany's go-to is mixed media — she'll intuitively choose the combination of mediums that best serves your portrait's story.</span>
             </button>
           </div>
         </div>
@@ -672,10 +681,10 @@
             <label class="rush-checkbox-label">
               <input type="checkbox" id="rushCheckbox">
               <span class="rush-check-icon"></span>
-              <span>I understand this is a rush window. Brittany will follow up if a rush fee applies.</span>
+              <span>I understand this is a rush window. A $150 rush fee will be added.</span>
             </label>
           </div>
-          <button class="btn btn-primary flow-next" data-next="10" id="timelineContinueBtn" style="display:none;">Continue &rarr;</button>
+          <button class="btn btn-primary flow-next" data-next="14" id="timelineContinueBtn" style="display:none;">Continue &rarr;</button>
         </div>
       </div>
 
@@ -699,8 +708,8 @@
             <div class="upload-previews" id="uploadPreviews"></div>
           </div>
           <div class="step-actions">
-            <button class="btn btn-ghost flow-next" data-next="11">Skip for Now</button>
-            <button class="btn btn-primary flow-next" data-next="11" id="continueWithPhotos" style="display:none;">Continue with Photos &rarr;</button>
+            <button class="btn btn-ghost flow-next" data-next="15">Skip for Now</button>
+            <button class="btn btn-primary flow-next" data-next="15" id="continueWithPhotos" style="display:none;">Continue with Photos &rarr;</button>
           </div>
         </div>
       </div>
@@ -770,10 +779,35 @@
         </div>
       </div>
 
-      <!-- STEP 13: Shipping Info -->
+      <!-- STEP 13: Share Your Story -->
       <div class="flow-step" data-step="13">
-        <div class="step-content step-centered">
+        <div class="step-content">
           <span class="step-number dynamic-step-num">13</span>
+          <h2>Share Your Story</h2>
+          <p>Every portrait carries a story. If you'd like, share a little about who this person is and what they mean to you. This helps Brittany connect with the spirit of the piece.</p>
+          <div class="flow-form">
+            <div class="form-group">
+              <label for="storyName">Who is this portrait of?</label>
+              <input type="text" id="storyName" placeholder="e.g. My grandmother, Rose">
+            </div>
+            <div class="form-group">
+              <label for="storyRelationship">What's your relationship?</label>
+              <input type="text" id="storyRelationship" placeholder="e.g. my grandmother, my dog, my best friend">
+            </div>
+            <div class="form-group">
+              <label for="storyText">Their story, in your words</label>
+              <textarea id="storyText" rows="4" placeholder="Share a memory, a feeling, or why this portrait matters to you..."></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary flow-next" data-next="10">Continue &rarr;</button>
+          <button class="btn btn-ghost flow-next" data-next="10">Skip for Now</button>
+        </div>
+      </div>
+
+      <!-- STEP 14: Shipping Info -->
+      <div class="flow-step" data-step="14">
+        <div class="step-content step-centered">
+          <span class="step-number dynamic-step-num">14</span>
           <h2>How would you like to receive your portrait?</h2>
           <div class="option-grid option-grid-2" data-field="shippingMethod">
             <button class="option-card option-tall" data-value="shipped">
@@ -814,12 +848,12 @@
           <div id="handDeliveredNote" style="display:none;">
             <p class="shipping-note">Brittany will reach out to coordinate a time and place for delivery or pickup.</p>
           </div>
-          <button class="btn btn-primary flow-next" data-next="14" id="shippingContinueBtn" style="display:none;">Continue &rarr;</button>
+          <button class="btn btn-primary flow-next" data-next="11" id="shippingContinueBtn" style="display:none;">Continue &rarr;</button>
         </div>
       </div>
 
-      <!-- STEP 14: Summary + Payment -->
-      <div class="flow-step" data-step="14">
+      <!-- STEP 15: Summary + Payment -->
+      <div class="flow-step" data-step="15">
         <div class="step-content step-centered">
           <span class="script-label">your portrait journey</span>
           <h2>Here's What We Will Create Together</h2>
@@ -831,7 +865,7 @@
             <div class="summary-total" id="summaryTotal">
               <!-- Dynamically populated -->
             </div>
-            <button class="btn btn-ghost summary-download-btn" id="downloadReceiptBtn">Download Receipt</button>
+            <button class="btn btn-ghost summary-download-btn" id="downloadReceiptBtn">Download Summary</button>
           </div>
           <h3 class="payment-heading">Choose a Payment Option</h3>
           <div class="payment-options" id="paymentOptions">
