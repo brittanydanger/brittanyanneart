@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   initNav();
   initScrollAnimations();
+  initParallax();
   initCommissionFlow();
   initContactForm();
   initPortfolioCarousel();
@@ -376,6 +377,28 @@ function initNav() {
   };
   window.addEventListener('scroll', handleNavScroll, { passive: true });
   handleNavScroll(); // set initial state
+}
+
+// ---- PARALLAX IMAGES ----
+function initParallax() {
+  const parallaxSections = document.querySelectorAll('.full-bleed-image');
+  if (!parallaxSections.length) return;
+
+  function updateParallax() {
+    const scrollY = window.scrollY;
+    parallaxSections.forEach(section => {
+      const img = section.querySelector('img');
+      if (!img) return;
+      const rect = section.getBoundingClientRect();
+      const sectionTop = rect.top + scrollY;
+      const speed = 0.3;
+      const offset = (scrollY - sectionTop) * speed;
+      img.style.transform = `translate3d(0, ${offset}px, 0)`;
+    });
+  }
+
+  window.addEventListener('scroll', updateParallax, { passive: true });
+  updateParallax();
 }
 
 // ---- SCROLL ANIMATIONS ----
