@@ -481,6 +481,21 @@ function initCommissionFlow() {
     });
   });
 
+  // Press Enter/Return to advance to next step
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    // Don't trigger if typing in a textarea
+    if (e.target.tagName === 'TEXTAREA') return;
+    // Find the visible Continue button in the current step
+    const activeStep = document.querySelector('.flow-step.active');
+    if (!activeStep) return;
+    const continueBtn = activeStep.querySelector('.btn-primary.flow-next');
+    if (continueBtn) {
+      e.preventDefault();
+      continueBtn.click();
+    }
+  });
+
   // Custom color palette toggle
   document.querySelectorAll('[data-field="colorPalette"] .option-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -1185,7 +1200,7 @@ function populateSummary() {
     subjectCount: 'Subjects',
     energy: 'Energy / Intention',
     approach: 'Approach',
-    style: 'Style',
+    style: 'Art Medium',
     colorPalette: 'Color Palette',
     size: 'Size'
   };
@@ -1402,8 +1417,9 @@ function populateSummary() {
     bookBtn.addEventListener('click', showConfirmation);
   }
 
-  // Download receipt button
+  // Download buttons
   document.getElementById('downloadReceiptBtn').addEventListener('click', downloadReceipt);
+  document.getElementById('downloadImageBtn').addEventListener('click', downloadAsImage);
 
   // Payment card click handlers — save order then create Stripe checkout
   paymentEl.querySelectorAll('.payment-card').forEach(card => {
@@ -1609,6 +1625,27 @@ function downloadReceipt() {
   if (printWindow) {
     printWindow.document.write(html);
     printWindow.document.close();
+  }
+}
+
+async function downloadAsImage() {
+  const summaryCard = document.getElementById('summaryCard');
+  if (!summaryCard || typeof html2canvas === 'undefined') return;
+
+  try {
+    const canvas = await html2canvas(summaryCard, {
+      backgroundColor: '#FFFAF6',
+      scale: 2,
+      useCORS: true,
+      logging: false
+    });
+
+    const link = document.createElement('a');
+    link.download = 'BrittanyAnne-Commission-Summary.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    console.error('Image download failed:', e);
   }
 }
 

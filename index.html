@@ -520,8 +520,8 @@
             </button>
             <button class="option-card" data-value="channel">
               <span class="color-swatch swatch-channel" aria-hidden="true"></span>
-              <span class="option-label">Let Brittany Channel</span>
-              <span class="option-sub">Trust the colors that come through</span>
+              <span class="option-label">Brittany's Intuition</span>
+              <span class="option-sub">Trust the colors that come naturally</span>
             </button>
             <button class="option-card" data-value="custom">
               <span class="color-swatch swatch-custom" aria-hidden="true"></span>
@@ -720,7 +720,7 @@
         <div class="step-content step-centered">
           <span class="step-number dynamic-step-num">11</span>
           <h2>Would you like a written message with your portrait?</h2>
-          <p>Brittany approaches each portrait with deep reverence, bringing about a sense of peace and spiritual guidance. If you would like, she can include a message inspired by the heart of your loved one and in the spirit of the artwork.</p>
+          <p>Brittany approaches each portrait with deep reverence and intentionality. If you&rsquo;d like, she can include a heartfelt written message inspired by the spirit of the artwork and the story behind it.</p>
           <!-- Gift path: personal note only -->
           <div id="giftNoteGroup" style="display:none;">
             <div class="step-textarea-group">
@@ -866,7 +866,10 @@
             <div class="summary-total" id="summaryTotal">
               <!-- Dynamically populated -->
             </div>
-            <button class="btn btn-ghost summary-download-btn" id="downloadReceiptBtn">Download Summary</button>
+            <div class="summary-download-group">
+              <button class="btn btn-ghost summary-download-btn" id="downloadReceiptBtn">Save as PDF</button>
+              <button class="btn btn-ghost summary-download-btn" id="downloadImageBtn">Save as Image</button>
+            </div>
           </div>
           <h3 class="payment-heading">Choose a Payment Option</h3>
           <div class="payment-options" id="paymentOptions">
@@ -904,6 +907,7 @@
     </div>
   </div>
 
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

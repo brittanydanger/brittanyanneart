@@ -2096,9 +2096,14 @@ input:-webkit-autofill:focus {
   text-align: right;
 }
 
+.summary-download-group {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
 .summary-download-btn {
-  display: block;
-  margin: var(--space-sm) auto 0;
   font-size: 0.8rem;
 }
 
