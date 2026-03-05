@@ -1564,10 +1564,75 @@ function downloadReceipt() {
 
 async function downloadAsImage() {
   const summaryCard = document.getElementById('summaryCard');
+  const summaryTotal = document.getElementById('summaryTotal');
   if (!summaryCard || typeof html2canvas === 'undefined') return;
 
+  // Build a branded offscreen element for the screenshot
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `
+    position: fixed; left: -9999px; top: 0;
+    width: 600px; padding: 48px 40px;
+    background: #FFFAF6; font-family: 'Cormorant Garamond', Georgia, serif;
+    color: #262D3C;
+  `;
+
+  // Header with logo + brand name
+  wrapper.innerHTML = `
+    <div style="text-align: center; margin-bottom: 32px;">
+      <img src="Branding/Logo%20PNG/Submark-C.png" alt="" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 12px;">
+      <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5;">Commission Summary</div>
+    </div>
+    <div style="border-top: 1px solid #C6C9DC; margin-bottom: 24px;"></div>
+  `;
+
+  // Clone summary rows with clean styling
+  const rows = summaryCard.querySelectorAll('.summary-row');
+  rows.forEach(row => {
+    const label = row.querySelector('.summary-label')?.textContent || '';
+    const value = row.querySelector('.summary-value')?.textContent || '';
+    const rowEl = document.createElement('div');
+    rowEl.style.cssText = `
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 14px 0; border-bottom: 1px solid rgba(198, 201, 220, 0.3);
+    `;
+    rowEl.innerHTML = `
+      <span style="font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.5; font-weight: 400;">${label}</span>
+      <span style="font-size: 16px; font-weight: 600; text-align: right; max-width: 55%;">${value}</span>
+    `;
+    wrapper.appendChild(rowEl);
+  });
+
+  // Total
+  if (summaryTotal) {
+    const totalClone = document.createElement('div');
+    totalClone.style.cssText = `
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 20px 0 0; margin-top: 8px;
+      border-top: 2px solid #262D3C;
+    `;
+    const totalLabel = summaryTotal.querySelector('.summary-label')?.textContent || 'Total';
+    const totalValue = summaryTotal.querySelector('.summary-value')?.textContent || '';
+    totalClone.innerHTML = `
+      <span style="font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">${totalLabel}</span>
+      <span style="font-size: 22px; font-weight: 700;">${totalValue}</span>
+    `;
+    wrapper.appendChild(totalClone);
+  }
+
+  // Footer
+  const footer = document.createElement('div');
+  footer.style.cssText = `
+    text-align: center; margin-top: 32px; padding-top: 24px;
+    border-top: 1px solid #C6C9DC;
+    font-size: 12px; opacity: 0.4; letter-spacing: 0.1em; text-transform: uppercase;
+  `;
+  footer.textContent = 'brittanyanneart.com';
+  wrapper.appendChild(footer);
+
+  document.body.appendChild(wrapper);
+
   try {
-    const canvas = await html2canvas(summaryCard, {
+    const canvas = await html2canvas(wrapper, {
       backgroundColor: '#FFFAF6',
       scale: 2,
       useCORS: true,
@@ -1580,6 +1645,8 @@ async function downloadAsImage() {
     link.click();
   } catch (e) {
     console.error('Image download failed:', e);
+  } finally {
+    document.body.removeChild(wrapper);
   }
 }
 
