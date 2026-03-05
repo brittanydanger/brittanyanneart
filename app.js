@@ -1596,17 +1596,17 @@ async function downloadAsImage() {
   // Build a branded offscreen element for the screenshot
   const wrapper = document.createElement('div');
   wrapper.style.cssText = `
-    position: fixed; left: -9999px; top: 0;
-    width: 600px; padding: 48px 40px;
+    position: absolute; left: -9999px; top: 0;
+    width: 540px; padding: 48px 48px;
     background: #FFFAF6; font-family: 'Cormorant Garamond', Georgia, serif;
-    color: #262D3C;
+    color: #262D3C; box-sizing: border-box;
   `;
 
   // Header with logo + brand name
   wrapper.innerHTML = `
     <div style="text-align: center; margin-bottom: 32px;">
-      <img src="Branding/Logo%20PNG/Submark-C.png" alt="" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 12px;">
-      <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5;">Commission Summary</div>
+      <img src="Branding/Logo%20PNG/Submark-C.png" alt="" style="width: 80px; height: auto; margin-bottom: 16px; display: inline-block;">
+      <div style="font-family: 'Josefin Sans', 'Cormorant Garamond', Georgia, serif; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4;">Commission Summary</div>
     </div>
     <div style="border-top: 1px solid #C6C9DC; margin-bottom: 24px;"></div>
   `;
