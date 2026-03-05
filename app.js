@@ -1803,3 +1803,77 @@ function resetState() {
   });
   clearFormErrors();
 }
+
+/* ============================================
+   EMAIL SIGNUP POPUP
+   ============================================ */
+(function initEmailPopup() {
+  const popup = document.getElementById('emailPopup');
+  if (!popup) return;
+
+  const STORAGE_KEY = 'ba_email_subscribed';
+
+  // Don't show if already subscribed or dismissed
+  if (localStorage.getItem(STORAGE_KEY)) return;
+
+  let shown = false;
+
+  function showPopup() {
+    if (shown) return;
+    shown = true;
+    popup.classList.add('active');
+    popup.setAttribute('aria-hidden', 'false');
+    window.removeEventListener('scroll', onScroll);
+  }
+
+  function hidePopup() {
+    popup.classList.remove('active');
+    popup.setAttribute('aria-hidden', 'true');
+    localStorage.setItem(STORAGE_KEY, 'dismissed');
+  }
+
+  // Show after 50% scroll
+  function onScroll() {
+    const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+    if (scrollPercent >= 0.5) showPopup();
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Close button
+  document.getElementById('emailPopupClose').addEventListener('click', hidePopup);
+
+  // Close on backdrop click
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) hidePopup();
+  });
+
+  // Form submit
+  document.getElementById('emailPopupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+
+    if (!name || !email) return;
+
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      });
+
+      // Show success
+      form.style.display = 'none';
+      popup.querySelector('.email-popup-note').style.display = 'none';
+      document.getElementById('emailPopupSuccess').style.display = 'block';
+      localStorage.setItem(STORAGE_KEY, 'subscribed');
+
+      // Auto-close after 3 seconds
+      setTimeout(hidePopup, 3000);
+    } catch (err) {
+      console.error('Subscribe error:', err);
+    }
+  });
+})();

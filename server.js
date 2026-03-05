@@ -70,7 +70,8 @@ function getDefaultDB() {
     },
     orders: [],
     contacts: [],
-    waitlist: []
+    waitlist: [],
+    subscribers: []
   };
 }
 
@@ -297,6 +298,33 @@ app.post('/api/waitlist', (req, res) => {
   res.json({ success: true });
 });
 
+// ---- POST /api/subscribe (email popup) ----
+app.post('/api/subscribe', (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required.' });
+  }
+
+  const db = readDB();
+
+  // Reject duplicates
+  if (db.subscribers && db.subscribers.some(s => s.email.toLowerCase() === email.toLowerCase())) {
+    return res.json({ success: true, message: 'Already subscribed' });
+  }
+
+  if (!db.subscribers) db.subscribers = [];
+  db.subscribers.push({
+    id: 'SUB-' + Date.now(),
+    name,
+    email,
+    createdAt: new Date().toISOString()
+  });
+  writeDB(db);
+
+  res.json({ success: true });
+});
+
 // ---- GET /api/orders (admin) ----
 app.get('/api/orders', requireAdmin, (req, res) => {
   const db = readDB();
@@ -317,6 +345,13 @@ app.get('/api/waitlist-entries', requireAdmin, (req, res) => {
   const db = readDB();
   const waitlist = [...db.waitlist].reverse();
   res.json(waitlist);
+});
+
+// ---- GET /api/subscribers (admin) ----
+app.get('/api/subscribers', requireAdmin, (req, res) => {
+  const db = readDB();
+  const subscribers = [...(db.subscribers || [])].reverse();
+  res.json(subscribers);
 });
 
 // ---- POST /api/webhook (Stripe) ----

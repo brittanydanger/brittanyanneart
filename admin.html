@@ -455,6 +455,7 @@
       <button class="admin-tab" data-panel="orders">Orders</button>
       <button class="admin-tab" data-panel="waitlist">Waitlist</button>
       <button class="admin-tab" data-panel="messages">Messages</button>
+      <button class="admin-tab" data-panel="subscribers">Subscribers</button>
     </div>
 
     <div class="admin-content">
@@ -534,6 +535,14 @@
         </ul>
       </div>
 
+      <!-- SUBSCRIBERS -->
+      <div class="admin-panel" id="panel-subscribers">
+        <h3 class="section-title">Email Subscribers</h3>
+        <ul class="admin-list" id="subscribersList">
+          <li class="empty-state">Loading...</li>
+        </ul>
+      </div>
+
     </div>
   </div>
 
@@ -603,6 +612,7 @@
       loadOrders();
       loadWaitlist();
       loadMessages();
+      loadSubscribers();
     }
 
     // ---- AVAILABILITY ----
@@ -810,6 +820,34 @@
         `).join('');
       } catch (e) {
         list.innerHTML = '<li class="empty-state">Failed to load messages</li>';
+      }
+    }
+
+    // ---- SUBSCRIBERS ----
+    async function loadSubscribers() {
+      const list = document.getElementById('subscribersList');
+      try {
+        const res = await fetch('/api/subscribers', {
+          headers: { Authorization: adminPassword }
+        });
+        const subs = await res.json();
+
+        if (subs.length === 0) {
+          list.innerHTML = '<li class="empty-state">No subscribers yet</li>';
+          return;
+        }
+
+        list.innerHTML = subs.map(s => `
+          <li class="admin-list-item">
+            <div class="admin-list-header">
+              <span class="admin-list-title">${s.name}</span>
+              <span class="admin-list-date">${formatDate(s.createdAt)}</span>
+            </div>
+            <div class="admin-list-detail">${s.email}</div>
+          </li>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = '<li class="empty-state">Failed to load subscribers</li>';
       }
     }
 

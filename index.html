@@ -907,6 +907,28 @@
     </div>
   </div>
 
+  <!-- ============================================ -->
+  <!-- EMAIL SIGNUP POPUP                            -->
+  <!-- ============================================ -->
+  <div class="modal-overlay" id="emailPopup" aria-hidden="true">
+    <div class="modal email-popup" role="dialog" aria-labelledby="emailPopupTitle">
+      <button class="email-popup-close" id="emailPopupClose" aria-label="Close">&times;</button>
+      <span class="script-label">let's stay connected</span>
+      <h2 id="emailPopupTitle">Join My Inner Circle</h2>
+      <p class="modal-subtitle">I'd love to keep you in the loop &mdash; new artwork, behind-the-scenes peeks, and first access when commissions open.</p>
+      <form id="emailPopupForm" class="email-popup-form">
+        <input type="text" name="name" placeholder="First Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit" class="btn btn-primary">I'm In</button>
+      </form>
+      <p class="email-popup-note">No spam, ever. Just art and heart.</p>
+      <div class="email-popup-success" id="emailPopupSuccess" style="display:none;">
+        <p class="script-label" style="margin-bottom:0.5rem;">you're in!</p>
+        <p>I can't wait to share what's next.</p>
+      </div>
+    </div>
+  </div>
+
   <script src="config.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
