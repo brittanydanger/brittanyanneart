@@ -4,96 +4,15 @@
    ============================================ */
 
 /* ----- SHOP CONFIG -----
-   Update products, Stripe keys, and shipping here.
+   All configurable values live in config.js (SITE_CONFIG).
+   This alias keeps existing references working.
    ============================================ */
 const SHOP_CONFIG = {
-  // Stripe publishable key (replace with your live key for production)
-  stripePublishableKey: '',
-
-  // Shipping
-  shippingFlat: 8,
-  freeShippingThreshold: 75,
-  shippingNote: 'Ships within 5–7 business days',
-
-  // Products — add/edit prints here
-  prints: [
-    {
-      id: 'print-001',
-      title: 'Heaven Sent',
-      description: 'A child wrapped in the warmth of heaven — soft pink clouds parting as she steps forward in white. This piece carries the energy of innocence, divine purpose, and the sacred moment a soul arrives earthside.',
-      image: 'images/Prints/Christ%20coming%20for%20Claire%20II.jpg',
-      images: ['images/Prints/Christ%20coming%20for%20Claire%20II.jpg'],
-      category: 'sacred',
-      tags: ['new'],
-      placeholderColor: '#F2C4B0',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 1
-    },
-    {
-      id: 'print-002',
-      title: 'Well Done',
-      description: 'A sacred reunion — the moment of being welcomed home with open arms and radiant joy. This piece channels the energy of divine love, recognition, and the promise that you are known and celebrated beyond the veil.',
-      image: 'images/Prints/IMG_9723.jpg',
-      images: ['images/Prints/IMG_9723.jpg'],
-      category: 'sacred',
-      tags: [],
-      placeholderColor: '#C9B48A',
-      sizes: {
-        '5x7':   { price: 25,  stripePriceId: '' },
-        '8x10':  { price: 40,  stripePriceId: '' },
-        '11x14': { price: 65,  stripePriceId: '' }
-      },
-      sortOrder: 2
-    },
-    {
-      id: 'print-003',
-      title: 'Birth Affirmation Cards — Non-Religious',
-      description: 'A set of 20 beautifully hand-drawn 8×10 birth affirmation cards in earthy, soothing tones. Designed to ground and empower you through labor and delivery. Display them in your birth space as visual anchors of calm and strength.',
-      image: 'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20NR.jpg',
-      images: [
-        'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20NR.jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/2%20Visual%20Design%20-%20done.jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/3%20Diverse%20Affirmations%20-%20done.jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/5%20Group%20of%20Cards%20-%20done.jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/6%20Quality%20-%20done.jpg'
-      ],
-      category: 'affirmations',
-      tags: ['new', 'digital'],
-      placeholderColor: '#C4A98A',
-      digital: true,
-      downloadFile: '',
-      sizes: {
-        'Digital Download': { price: 17.77, stripePriceId: '' }
-      },
-      sortOrder: 3
-    },
-    {
-      id: 'print-004',
-      title: 'Birth Affirmation Cards — Faith-Based',
-      description: 'A set of 20 beautifully hand-drawn 8×10 birth affirmation cards rooted in faith. Earthy tones and soothing imagery paired with scripture-inspired words to carry you through labor with peace and trust in God\'s plan.',
-      image: 'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20R.jpg',
-      images: [
-        'images/Amazon%20Storefront%20Birth%20Cards/1%20Cover%20Image%20R.jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/2%20Visual%20Design%20-%20done%20(1).jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/3%20Diverse%20Affirmations%20-%20done%20(1).jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/5%20Group%20of%20Cards%20-%20done%20(1).jpg',
-        'images/Amazon%20Storefront%20Birth%20Cards/6%20Quality%20-%20done%20(1).jpg'
-      ],
-      category: 'affirmations',
-      tags: ['new', 'digital'],
-      placeholderColor: '#C9A088',
-      digital: true,
-      downloadFile: 'images/Amazon%20Storefront%20Birth%20Cards/Christ-Birth-Cards-PDF.pdf',
-      sizes: {
-        'Digital Download': { price: 17.77, stripePriceId: '' }
-      },
-      sortOrder: 4
-    }
-  ]
+  stripePublishableKey: SITE_CONFIG.stripePublishableKey,
+  shippingFlat: SITE_CONFIG.shippingFlat,
+  freeShippingThreshold: SITE_CONFIG.freeShippingThreshold,
+  shippingNote: SITE_CONFIG.shippingNote,
+  prints: SITE_CONFIG.prints
 };
 
 

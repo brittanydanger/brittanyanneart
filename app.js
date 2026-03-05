@@ -4,49 +4,9 @@
    ============================================ */
 
 // ---- CONFIGURATION ----
-// Update these values to customize pricing, links, and contact info.
-const CONFIG = {
-  // Pricing matrix: pricing[size][subjects] = dollar amount
-  // Use null for unavailable combos. Prices with + are starting prices.
-  pricing: {
-    '8x10':  { 1: 300, 2: 350, 3: 400, 4: null, 5: null, 6: null },
-    '11x14': { 1: 350, 2: 400, 3: 450, 4: 500,  5: null, 6: null },
-    '16x20': { 1: 450, 2: 500, 3: 550, 4: 600,  5: 650,  6: null },
-    '18x24': { 1: 550, 2: 625, 3: 700, 4: 775,  5: 850,  6: 925 },
-    '24x30': { 1: 700, 2: 800, 3: 900, 4: 1000, 5: 1100, 6: 1200 },
-    '24x36': { 1: 850, 2: 950, 3: 1050, 4: 1150, 5: 1250, 6: 1350 },
-    '36x36': { 1: 1050, 2: 1350, 3: 1650, 4: 1950, 5: 2250, 6: 2550 },
-    '48x48': { 1: 2000, 2: 2500, 3: 3000, 4: 3500, 5: 4000, 6: 4500 }
-  },
-  // 48x48 prices are "starting at" — set to true to show "from $X"
-  startingAtSizes: ['48x48'],
-  channeledPremium: 0,         // Extra cost for fully channeled (0 if same price)
-  depositPercent: 50,
-  depositSurchargePercent: 7,    // % increase for 50% deposit option
-  paymentPlanInstallments: 3,
-  paymentPlanSurchargePercent: 10, // % increase for payment plan option
-
-  // Stripe Payment Links — map to your actual Stripe links
-  // Format: 'description': 'https://buy.stripe.com/...'
-  stripeLinks: {
-    'full': '',
-    'deposit': '',
-    'plan': ''
-  },
-
-  turnaroundTime: '4-8 weeks',
-  email: 'hello@brittanyanneart.com',
-
-  // External shop URL (Etsy, Shopify, etc.)
-  shopUrl: '',
-
-  // Social media URLs
-  social: {
-    instagram: '',
-    facebook: '',
-    tiktok: 'https://www.tiktok.com/@brittanyanneart'
-  }
-};
+// All configurable values live in config.js (SITE_CONFIG).
+// This alias keeps existing references working.
+const CONFIG = SITE_CONFIG;
 
 // ---- STATE ----
 const state = {
@@ -87,8 +47,8 @@ const STEPS_CHANNELED = [0, 1, 2, 3, 7, 8, 9, 14, 11, 12, 13, 10, 15];
 
 // Print add-on quantities
 const printAddOns = { '5x7': 0, '8x10': 0, '11x14': 0 };
-const printAddOnPrices = { '5x7': 25, '8x10': 40, '11x14': 65 };
-const IMAGE_CAPTURE_FEE = 75;
+const printAddOnPrices = CONFIG.printAddOnPrices;
+const IMAGE_CAPTURE_FEE = CONFIG.imageCaptureFee;
 
 function getStepSequence() {
   if (state.approach === 'channeled') return STEPS_CHANNELED;
@@ -652,31 +612,17 @@ function goToStep(stepNum) {
     const giftNoteGroup = document.getElementById('giftNoteGroup');
     const channeledGroup = document.getElementById('channeledMessageGroup');
 
+    const copy = CONFIG.messageCopy[subject] || CONFIG.messageCopy['default'];
     if (subject === 'loved-one') {
-      // Gift path — personal note replaces channeled message
-      msgH2.textContent = 'Would you like to include a personal note?';
-      msgP.textContent = 'Write a heartfelt message to accompany the portrait — it will be handwritten and included with the gift.';
+      // Gift path — personal note replaces written message
       giftNoteGroup.style.display = 'block';
       channeledGroup.style.display = 'none';
     } else {
-      // All other paths — channeled message
       giftNoteGroup.style.display = 'none';
       channeledGroup.style.display = 'block';
-
-      if (subject === 'passed') {
-        msgH2.textContent = 'Would you like a written message from your loved one?';
-        msgP.textContent = 'During the creation of your portrait, Brittany can tune in and receive a personal written message from your loved one who has passed. This is offered by donation.';
-      } else if (subject === 'myself') {
-        msgH2.textContent = 'Would you like a message from your higher self?';
-        msgP.textContent = 'During the creation of your portrait, Brittany can tune in and receive a personal written message from your higher self — words of guidance, love, and truth. This is offered by donation.';
-      } else if (subject === 'family') {
-        msgH2.textContent = 'Would you like a personal message for the family?';
-        msgP.textContent = 'Brittany can tune in and receive a written message for your family — something meaningful to accompany the portrait. This is offered by donation.';
-      } else {
-        msgH2.textContent = 'Would you like a personal written message included?';
-        msgP.textContent = 'Brittany can tune in and receive a personal written message to accompany your portrait. This is offered by donation.';
-      }
     }
+    msgH2.textContent = copy.heading;
+    msgP.textContent = copy.description;
   }
 
   // If we're on the timeline step, build the delivery window grid
@@ -915,8 +861,7 @@ function calculateTotal() {
   const channeledExtra = state.approach === 'channeled' ? CONFIG.channeledPremium : 0;
 
   // Medium premium (percentage of base price)
-  const mediumPremiums = { 'colored-pencil': 0, 'digital': 0, 'watercolor': 0.15, 'acrylic': 0.20, 'mixed-media': 0.25, 'brittanys-choice': 0.25 };
-  const mediumPremium = Math.round(basePrice * (mediumPremiums[state.style] || 0));
+  const mediumPremium = Math.round(basePrice * (CONFIG.mediumPremiums[state.style] || 0));
 
   // Print add-on total
   let printTotal = 0;
@@ -929,7 +874,7 @@ function calculateTotal() {
   const imageCaptureFee = hasAnyPrints ? IMAGE_CAPTURE_FEE : 0;
 
   // Rush fee
-  const rushFee = state.rushRequested ? 150 : 0;
+  const rushFee = state.rushRequested ? CONFIG.rushFee : 0;
 
   // Donation amount
   const donation = state.donationAmount ? parseFloat(state.donationAmount) || 0 : 0;
@@ -945,9 +890,8 @@ function buildTimelineGrid() {
 
   // Update subtitle with size-specific lead time
   const subtitle = document.getElementById('timelineSubtitle');
-  const rushWeeks = RUSH_WEEKS_BY_SIZE[state.size] || 6;
-  const leadTimes = { '8x10': '2–3 weeks', '11x14': '4–6 weeks', '16x20': '6–8 weeks', '18x24': '6–8 weeks', '24x30': '2–3 months', '24x36': '2–3 months', '36x36': '2.5–3 months', '48x48': '3–4 months' };
-  const timeRange = leadTimes[state.size] || '2–6 weeks';
+  const rushWeeks = CONFIG.rushWeeksBySize[state.size] || 6;
+  const timeRange = CONFIG.leadTimes[state.size] || '2–6 weeks';
   subtitle.textContent = `A ${state.size}" portrait typically takes ${timeRange}. Select your preferred delivery window below.`;
 
   // Render the grid synchronously first, then apply blocked windows from server
@@ -965,17 +909,8 @@ function buildTimelineGrid() {
     .catch(() => { /* Server unavailable — all windows stay available */ });
 }
 
-// Minimum lead times (weeks) per size — anything under this is a rush
-const RUSH_WEEKS_BY_SIZE = {
-  '8x10':  2,
-  '11x14': 4,
-  '16x20': 6,
-  '18x24': 6,
-  '24x30': 8,
-  '24x36': 8,
-  '36x36': 10,
-  '48x48': 12
-};
+// Rush weeks alias from config
+const RUSH_WEEKS_BY_SIZE = CONFIG.rushWeeksBySize;
 
 function renderTimelineWindows(grid, continueBtn, rushNotice, blockedWindows) {
   grid.innerHTML = '';
@@ -1231,8 +1166,7 @@ function populateSummary() {
   }
 
   // Medium premium line
-  const mediumPremiums = { 'colored-pencil': 0, 'digital': 0, 'watercolor': 0.15, 'acrylic': 0.20, 'mixed-media': 0.25, 'brittanys-choice': 0.25 };
-  const mediumRate = mediumPremiums[state.style] || 0;
+  const mediumRate = CONFIG.mediumPremiums[state.style] || 0;
   if (mediumRate > 0 && state.size && state.size !== 'custom') {
     const subjects = getSubjectKey();
     const sizeData = CONFIG.pricing[state.size];
@@ -1277,7 +1211,7 @@ function populateSummary() {
   if (state.rushRequested) {
     html += `<div class="summary-row">
       <span class="summary-label">Rush Fee</span>
-      <span class="summary-value">$150</span>
+      <span class="summary-value">$${CONFIG.rushFee}</span>
     </div>`;
   }
 
