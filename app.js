@@ -1812,9 +1812,13 @@ function resetState() {
   if (!popup) return;
 
   const STORAGE_KEY = 'ba_email_subscribed';
+  const SESSION_KEY = 'ba_email_popup_shown';
 
-  // Don't show if already subscribed or dismissed
-  if (localStorage.getItem(STORAGE_KEY)) return;
+  // Never show again if they actually subscribed
+  if (localStorage.getItem(STORAGE_KEY) === 'subscribed') return;
+
+  // Only show once per session
+  if (sessionStorage.getItem(SESSION_KEY)) return;
 
   let shown = false;
 
@@ -1829,13 +1833,13 @@ function resetState() {
   function hidePopup() {
     popup.classList.remove('active');
     popup.setAttribute('aria-hidden', 'true');
-    localStorage.setItem(STORAGE_KEY, 'dismissed');
+    sessionStorage.setItem(SESSION_KEY, 'true');
   }
 
-  // Show after 50% scroll
+  // Show after 30% scroll
   function onScroll() {
     const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-    if (scrollPercent >= 0.5) showPopup();
+    if (scrollPercent >= 0.3) showPopup();
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -1872,6 +1876,38 @@ function resetState() {
 
       // Auto-close after 3 seconds
       setTimeout(hidePopup, 3000);
+    } catch (err) {
+      console.error('Subscribe error:', err);
+    }
+  });
+})();
+
+/* ============================================
+   INLINE EMAIL SIGNUP (contact section)
+   ============================================ */
+(function initInlineSignup() {
+  const form = document.getElementById('inlineSignupForm');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+
+    if (!name || !email) return;
+
+    try {
+      await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      });
+
+      form.style.display = 'none';
+      const note = document.querySelector('.inline-signup-note');
+      if (note) note.style.display = 'none';
+      document.getElementById('inlineSignupSuccess').style.display = 'block';
+      localStorage.setItem('ba_email_subscribed', 'subscribed');
     } catch (err) {
       console.error('Subscribe error:', err);
     }

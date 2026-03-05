@@ -1163,6 +1163,65 @@ input:-webkit-autofill:focus {
   height: 20px;
 }
 
+/* ----- Inline Email Signup (contact section) ----- */
+
+.inline-signup {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.inline-signup-heading {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-accent);
+}
+
+.inline-signup-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: var(--space-sm);
+}
+
+.inline-signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inline-signup-form input {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background: var(--color-bg);
+}
+
+.inline-signup-form input:focus {
+  outline: none;
+  border-color: var(--rose-gold);
+}
+
+.inline-signup-form .btn {
+  margin-top: 0.25rem;
+}
+
+.inline-signup-note {
+  font-size: 0.75rem;
+  opacity: 0.45;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+.inline-signup-success {
+  font-size: 0.9rem;
+  color: var(--rose-gold);
+  font-style: italic;
+}
+
 /* ============================================
    FOOTER
    ============================================ */
