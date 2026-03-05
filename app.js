@@ -468,7 +468,19 @@ function initCommissionFlow() {
   document.querySelectorAll('[data-field="wantsReading"] .option-card').forEach(card => {
     card.addEventListener('click', () => {
       const donationGroup = document.getElementById('donationGroup');
-      donationGroup.style.display = card.dataset.value === 'yes' ? 'block' : 'none';
+      if (card.dataset.value === 'yes') {
+        donationGroup.style.display = 'block';
+      } else {
+        donationGroup.style.display = 'none';
+        // Auto-advance when they choose "No Thank You"
+        setTimeout(() => {
+          const sequence = getStepSequence();
+          const currentIndex = getCurrentStepIndex();
+          if (currentIndex < sequence.length - 1) {
+            goToStep(sequence[currentIndex + 1]);
+          }
+        }, 300);
+      }
     });
   });
 
@@ -481,7 +493,13 @@ function initCommissionFlow() {
       } else {
         printGroup.style.display = 'none';
         // Auto-advance when they choose "No Thanks"
-        setTimeout(() => goToStep(9), 300);
+        setTimeout(() => {
+          const sequence = getStepSequence();
+          const currentIndex = getCurrentStepIndex();
+          if (currentIndex < sequence.length - 1) {
+            goToStep(sequence[currentIndex + 1]);
+          }
+        }, 300);
       }
     });
   });
@@ -495,11 +513,19 @@ function initCommissionFlow() {
       if (card.dataset.value === 'shipped') {
         addressGroup.style.display = 'block';
         handNote.style.display = 'none';
+        continueBtn.style.display = 'inline-block';
       } else {
         addressGroup.style.display = 'none';
         handNote.style.display = 'block';
+        // Auto-advance when they choose "Hand Delivered"
+        setTimeout(() => {
+          const sequence = getStepSequence();
+          const currentIndex = getCurrentStepIndex();
+          if (currentIndex < sequence.length - 1) {
+            goToStep(sequence[currentIndex + 1]);
+          }
+        }, 300);
       }
-      continueBtn.style.display = 'inline-block';
     });
   });
 
