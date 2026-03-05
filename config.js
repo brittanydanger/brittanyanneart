@@ -61,8 +61,8 @@ const SITE_CONFIG = {
   // PRINT ADD-ONS (in commission flow)
   // ============================================
 
-  printAddOnPrices: { '5x7': 25, '8x10': 40, '11x14': 65 },
-  imageCaptureFee: 75,  // One-time fee when any print add-on is selected
+  printAddOnPrices: { '5x7': 35, '8x10': 50, '11x14': 75 },
+  imageCaptureFee: 0,  // Digital capture now included in every commission
 
 
   // ============================================
@@ -103,23 +103,23 @@ const SITE_CONFIG = {
   messageCopy: {
     'loved-one': {
       heading: 'Would you like to include a personal note?',
-      description: 'Write a heartfelt message to accompany the portrait — it will be handwritten and included with the gift.'
+      description: 'Write a heartfelt message to accompany the portrait \u2014 I\u2019ll handwrite it and include it with the gift.'
     },
     'passed': {
       heading: 'Would you like a written message with your portrait?',
-      description: 'Brittany approaches each portrait with deep reverence and intentionality. If you\u2019d like, she can include a heartfelt written message inspired by the spirit of the artwork and the story behind it.'
+      description: 'I approach each portrait with deep reverence and intentionality. If you\u2019d like, I can include a heartfelt written message inspired by the person, the story, and the spirit behind the artwork.'
     },
     'myself': {
       heading: 'Would you like a personal message with your portrait?',
-      description: 'Brittany approaches each portrait with deep reverence and intentionality. If you\u2019d like, she can include a heartfelt written message — words of guidance, love, and truth — inspired by the spirit of the artwork.'
+      description: 'I approach each portrait with deep reverence and intentionality. If you\u2019d like, I can include a heartfelt written message \u2014 words of guidance, love, and truth \u2014 inspired by you and the spirit of the artwork.'
     },
     'family': {
       heading: 'Would you like a personal message for the family?',
-      description: 'Brittany can include a heartfelt written message for your family — something meaningful to accompany the portrait. This is offered by donation.'
+      description: 'I can include a heartfelt written message for your family \u2014 something meaningful inspired by the people, the story, and the spirit behind the portrait. This is offered by donation.'
     },
     'default': {
       heading: 'Would you like a written message with your portrait?',
-      description: 'Brittany approaches each portrait with deep reverence and intentionality. If you\u2019d like, she can include a heartfelt written message inspired by the spirit of the artwork and the story behind it.'
+      description: 'I approach each portrait with deep reverence and intentionality. If you\u2019d like, I can include a heartfelt written message inspired by the person, the story, and the spirit behind the artwork.'
     }
   },
 

@@ -1278,9 +1278,9 @@ function populateSummary() {
     </div>`;
   }
 
-  if (hasAnyPrints) {
+  if (hasAnyPrints && IMAGE_CAPTURE_FEE > 0) {
     html += `<div class="summary-row">
-      <span class="summary-label">Image Capture Fee</span>
+      <span class="summary-label">Digital File + Digitizing</span>
       <span class="summary-value">$${IMAGE_CAPTURE_FEE}</span>
     </div>`;
   }
