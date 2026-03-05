@@ -576,10 +576,15 @@ h1, h2, h3, h4 {
 }
 
 .btn-hero:hover {
-  background: #fff;
+  background: var(--rose-gold);
   transform: translateY(-1px);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-  color: var(--dark-blue);
+  color: #fff;
+}
+
+.btn-hero:active {
+  background: var(--rose-gold);
+  color: #fff;
 }
 
 .btn-hero-outline {
