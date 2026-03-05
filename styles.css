@@ -97,7 +97,7 @@ html {
 body {
   font-family: var(--font-body);
   font-weight: 300;
-  font-size: 18px;
+  font-size: 22px;
   line-height: 1.7;
   color: var(--color-text);
   background-color: var(--color-bg);
@@ -1065,6 +1065,12 @@ h1, h2, h3, h4 {
   }
 }
 
+.contact-centered {
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .form-group {
   margin-bottom: var(--space-sm);
 }
@@ -1126,8 +1132,9 @@ input:-webkit-autofill:focus {
 .contact-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--space-md);
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .contact-email a {
@@ -1137,6 +1144,7 @@ input:-webkit-autofill:focus {
 
 .social-links {
   display: flex;
+  justify-content: center;
   gap: var(--space-sm);
 }
 
@@ -1169,6 +1177,7 @@ input:-webkit-autofill:focus {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
 }
 
 .inline-signup-heading {
